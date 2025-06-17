@@ -18,20 +18,20 @@ WiFiServer server(80);
 String header;
 
 // Auxiliar variables to store the current output state
-String output26State = "off";
+String output2State = "off";
 String output27State = "off";
 
 // Assign output variables to GPIO pins
-const int output26 = 26;
+const int output2 = 2;
 const int output27 = 27;
 
 void setup() {
   Serial.begin(115200);
   // Initialize the output variables as outputs
-  pinMode(output26, OUTPUT);
+  pinMode(output2, OUTPUT);
   pinMode(output27, OUTPUT);
   // Set outputs to LOW
-  digitalWrite(output26, LOW);
+  digitalWrite(output2, LOW);
   digitalWrite(output27, LOW);
 
   if (!LittleFS.begin()) {
@@ -52,7 +52,7 @@ void setup() {
 }
 
 void loop() {
-  WiFiClient client = server.available();   // Listen for incoming clients
+  WiFiClient client = server.available();
 
   if (client) {
     Serial.println("New Client.");
@@ -62,34 +62,37 @@ void loop() {
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
-        Serial.write(c);
         header += c;
 
         if (c == '\n') {
-          // End of request
           if (currentLine.length() == 0) {
 
-            // Handle GPIO requests
-            if (header.indexOf("GET /26/on") >= 0) {
-              Serial.println("GPIO 26 ON");
-              output26State = "on";
-              digitalWrite(output26, HIGH);
-            } else if (header.indexOf("GET /26/off") >= 0) {
-              Serial.println("GPIO 26 OFF");
-              output26State = "off";
-              digitalWrite(output26, LOW);
+            // --- Handle GPIO commands ---
+            if (header.indexOf("GET /2/on") >= 0) {
+              output2State = "on";
+              digitalWrite(output2, HIGH);
+            } else if (header.indexOf("GET /2/off") >= 0) {
+              output2State = "off";
+              digitalWrite(output2, LOW);
             } else if (header.indexOf("GET /27/on") >= 0) {
-              Serial.println("GPIO 27 ON");
               output27State = "on";
               digitalWrite(output27, HIGH);
             } else if (header.indexOf("GET /27/off") >= 0) {
-              Serial.println("GPIO 27 OFF");
               output27State = "off";
               digitalWrite(output27, LOW);
             }
 
-            // Serve CSS
-            if (header.indexOf("GET /style.css") >= 0) {
+            // --- Serve JSON with GPIO states ---
+            if (header.indexOf("GET /gpio") >= 0) {
+              client.println("HTTP/1.1 200 OK");
+              client.println("Content-Type: application/json");
+              client.println("Connection: close");
+              client.println();
+              client.print("{\"2\":\"" + output2State + "\",\"27\":\"" + output27State + "\"}");
+            }
+
+            // --- Serve style.css ---
+            else if (header.indexOf("GET /style.css") >= 0) {
               File file = LittleFS.open("/style.css", "r");
               if (file) {
                 client.println("HTTP/1.1 200 OK");
@@ -102,22 +105,18 @@ void loop() {
                 file.close();
               }
 
-            // Serve HTML and inject states
-            } else {
+            // --- Serve index.html ---
+            } else if (header.indexOf("GET /") >= 0) {
               File file = LittleFS.open("/index.html", "r");
               if (file) {
-                String html = file.readString();
-                file.close();
-
-                // Replace placeholders with actual GPIO state
-                html.replace("{{STATE26}}", output26State);
-                html.replace("{{STATE27}}", output27State);
-
                 client.println("HTTP/1.1 200 OK");
                 client.println("Content-Type: text/html");
                 client.println("Connection: close");
                 client.println();
-                client.println(html);
+                while (file.available()) {
+                  client.write(file.read());
+                }
+                file.close();
               }
             }
 
@@ -131,10 +130,8 @@ void loop() {
       }
     }
 
-    // End of connection
     header = "";
     client.stop();
     Serial.println("Client disconnected.");
-    Serial.println();
   }
 }

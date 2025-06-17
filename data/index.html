@@ -4,20 +4,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/style.css">
-  <title>ESP32 Web Server</title>
+  <title>Merwede Utrecht 10kV Grid Dashboard</title>
 </head>
 <body>
-  <h1>ESP32 Web Server</h1>
-  <p>GPIO 26 - State: {{STATE26}}</p>
+  <h1>Merwede Utrecht 10kV Net</h1>
+  <h1>Grid Dashboard</h1>
+
+  <p>GPIO 2 - State: <span id="state2">Loading...</span></p>
   <p>
-    <a href="/26/on"><button class="button">ON</button></a>
-    <a href="/26/off"><button class="button button2">OFF</button></a>
+    <button class="button" onclick="setGPIO(2, 'on')">ON</button>
+    <button class="button button2" onclick="setGPIO(2, 'off')">OFF</button>
   </p>
 
-  <p>GPIO 27 - State: {{STATE27}}</p>
+  <p>GPIO 27 - State: <span id="state27">Loading...</span></p>
   <p>
-    <a href="/27/on"><button class="button">ON</button></a>
-    <a href="/27/off"><button class="button button2">OFF</button></a>
+    <button class="button" onclick="setGPIO(27, 'on')">ON</button>
+    <button class="button button2" onclick="setGPIO(27, 'off')">OFF</button>
   </p>
+
+  <script>
+    async function updateStates() {
+      try {
+        const res = await fetch('/gpio');
+        const data = await res.json();
+        document.getElementById('state2').textContent = data["2"];
+        document.getElementById('state27').textContent = data["27"];
+      } catch (e) {
+        console.error("Error fetching GPIO states:", e);
+      }
+    }
+
+    async function setGPIO(pin, state) {
+      try {
+        await fetch(`/${pin}/${state}`);   // send command to ESP32
+        await updateStates();              // then update state display
+      } catch (e) {
+        console.error("Failed to set GPIO:", e);
+      }
+    }
+
+    // Initial and periodic update
+    updateStates();
+    setInterval(updateStates, 500);
+  </script>
 </body>
 </html>
