@@ -18,3 +18,13 @@ html {
 .button2 {
   background-color: #555555;
 }
+
+.run_button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 16px 40px;
+  font-size: 30px;
+  margin: 2px;
+  cursor: pointer;
+}

@@ -4,11 +4,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" type="text/css" href="style.css" />
   <title>Merwede Utrecht 10kV Grid Dashboard</title>
 </head>
 <body>
-  <h1>Merwede Utrecht 10kV Net</h1>
+  <h1>Merwede Utrecht</h1>
   <h1>Grid Dashboard</h1>
+
+  <p>Simulation status: <span id="run_state">Loading...</span></p>
+  <p>
+    <button class="button" onclick="playPauze('run')">RUN</button>
+    <button class="button button2" onclick="playPauze('stop')">STOP</button>
+  </p>
 
   <p>GPIO 2 - State: <span id="state2">Loading...</span></p>
   <p>
@@ -29,6 +36,7 @@
         const data = await res.json();
         document.getElementById('state2').textContent = data["2"];
         document.getElementById('state27').textContent = data["27"];
+        document.getElementById('run_state').textContent = data["runState"];
       } catch (e) {
         console.error("Error fetching GPIO states:", e);
       }
@@ -40,6 +48,15 @@
         await updateStates();              // then update state display
       } catch (e) {
         console.error("Failed to set GPIO:", e);
+      }
+    }
+
+    async function playPauze(state) {
+      try {
+        await fetch(`/run_state/${state}`);   // send command to ESP32
+        await updateStates();              // then update state display
+      } catch (e) {
+        console.error("Failed to play/pauze:", e);
       }
     }
 
