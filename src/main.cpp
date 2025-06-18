@@ -32,6 +32,8 @@ const int output27 = 27;
 
 // Prototypes
 void HTML_handler();
+void stripBlue();
+void stripOff();
 
 void setup() {
   Serial.begin(115200);
@@ -60,14 +62,22 @@ void setup() {
 
   FastLED.addLeds<LED_TYPE, STRIP_PIN, COLOR_ORDER>(leds, NUM_LEDS);
   FastLED.setBrightness(BRIGHTNESS);
+}
 
+void loop() {
+  HTML_handler();
+}
+
+void stripBlue() {
   // Set all LEDs to a static color (e.g., red)
   fill_solid(leds, NUM_LEDS, CRGB::Blue);  // Options: Red, Green, Blue, etc.
   FastLED.show();  // Send data to the strip
 }
 
-void loop() {
-  HTML_handler();
+void stripOff() {
+  // Turn off all LEDs
+  fill_solid(leds, NUM_LEDS, CRGB::Black);
+  FastLED.show();
 }
 
 void HTML_handler() {
@@ -97,10 +107,12 @@ void HTML_handler() {
 
             else if (header.indexOf("GET /run_state/run") >= 0) {
               runState = "Running";
+              stripBlue();  // Turn on the blue strip
             }
 
             else if (header.indexOf("GET /run_state/stop") >= 0) {
-             runState = "Stopped";
+              runState = "Stopped";
+              stripOff();  // Turn off the strip
             }
 
             else if (header.indexOf("GET /27/on") >= 0) {
