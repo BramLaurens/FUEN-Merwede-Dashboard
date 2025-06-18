@@ -1,11 +1,15 @@
 #include <Arduino.h>
 #include <LittleFS.h>
 #include <WiFi.h>
+#include <FastLED.h>
 
-/*********
-  Rui Santos
-  Complete project details at https://randomnerdtutorials.com  
-*********/
+#define STRIP_PIN 4 
+#define NUM_LEDS 144
+#define LED_TYPE WS2812B
+#define COLOR_ORDER GRB
+#define BRIGHTNESS  100
+
+CRGB leds[NUM_LEDS];
 
 // Network credentials
 const char* ssid     = "FUEN-EV2A-1";
@@ -53,6 +57,13 @@ void setup() {
   Serial.println(IP);
   
   server.begin();
+
+  FastLED.addLeds<LED_TYPE, STRIP_PIN, COLOR_ORDER>(leds, NUM_LEDS);
+  FastLED.setBrightness(BRIGHTNESS);
+
+  // Set all LEDs to a static color (e.g., red)
+  fill_solid(leds, NUM_LEDS, CRGB::Blue);  // Options: Red, Green, Blue, etc.
+  FastLED.show();  // Send data to the strip
 }
 
 void loop() {
