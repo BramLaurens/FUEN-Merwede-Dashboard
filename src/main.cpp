@@ -3,13 +3,21 @@
 #include <WiFi.h>
 #include <FastLED.h>
 
-#define STRIP_PIN 4 
-#define NUM_LEDS 144
+#define HV1_PIN 2 
+#define HV1_NUM_LEDS 53
 #define LED_TYPE WS2812B
 #define COLOR_ORDER GRB
-#define BRIGHTNESS  100
+#define BRIGHTNESS  255
 
-CRGB leds[NUM_LEDS];
+#define HV2_PIN 4
+#define HV2_NUM_LEDS 12
+
+#define HV3_PIN 16
+#define HV3_NUM_LEDS 26
+
+CRGB leds[HV1_NUM_LEDS];
+CRGB leds2[HV2_NUM_LEDS];
+CRGB leds3[HV3_NUM_LEDS];
 
 // Network credentials
 const char* ssid     = "FUEN-EV2A-1";
@@ -60,7 +68,9 @@ void setup() {
   
   server.begin();
 
-  FastLED.addLeds<LED_TYPE, STRIP_PIN, COLOR_ORDER>(leds, NUM_LEDS);
+  FastLED.addLeds<LED_TYPE, HV1_PIN, COLOR_ORDER>(leds, HV1_NUM_LEDS);
+  FastLED.addLeds<LED_TYPE, HV2_PIN, COLOR_ORDER>(leds2, HV2_NUM_LEDS);
+  FastLED.addLeds<LED_TYPE, HV3_PIN, COLOR_ORDER>(leds3, HV3_NUM_LEDS);
   FastLED.setBrightness(BRIGHTNESS);
 }
 
@@ -70,13 +80,17 @@ void loop() {
 
 void stripBlue() {
   // Set all LEDs to a static color (e.g., red)
-  fill_solid(leds, NUM_LEDS, CRGB::Blue);  // Options: Red, Green, Blue, etc.
+  fill_solid(leds, HV1_NUM_LEDS, CRGB::Blue);  // Options: Red, Green, Blue, etc.
+  fill_solid(leds2, HV2_NUM_LEDS, CRGB::Blue);  // Options: Red, Green, Blue, etc.
+  fill_solid(leds3, HV3_NUM_LEDS, CRGB::Blue);  // Options: Red, Green, Blue, etc.
   FastLED.show();  // Send data to the strip
 }
 
 void stripOff() {
   // Turn off all LEDs
-  fill_solid(leds, NUM_LEDS, CRGB::Black);
+  fill_solid(leds, HV1_NUM_LEDS, CRGB::Black);
+  fill_solid(leds2, HV2_NUM_LEDS, CRGB::Black);
+  fill_solid(leds3, HV3_NUM_LEDS, CRGB::Black);
   FastLED.show();
 }
 
