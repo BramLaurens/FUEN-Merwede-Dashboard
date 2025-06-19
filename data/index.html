@@ -17,18 +17,6 @@
     <button class="button button2" onclick="playPauze('stop')">STOP</button>
   </p>
 
-  <p>GPIO 2 - State: <span id="state2">Loading...</span></p>
-  <p>
-    <button class="button" onclick="setGPIO(2, 'on')">ON</button>
-    <button class="button button2" onclick="setGPIO(2, 'off')">OFF</button>
-  </p>
-
-  <p>GPIO 27 - State: <span id="state27">Loading...</span></p>
-  <p>
-    <button class="button" onclick="setGPIO(27, 'on')">ON</button>
-    <button class="button button2" onclick="setGPIO(27, 'off')">OFF</button>
-  </p>
-
   <script>
     async function updateStates() {
       try {
