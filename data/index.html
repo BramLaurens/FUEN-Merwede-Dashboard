@@ -8,22 +8,41 @@
   <title>Merwede Utrecht 10kV Grid Dashboard</title>
 </head>
 <body>
-  <h1>Merwede Utrecht</h1>
-  <h1>Grid Dashboard</h1>
+  <h1>Merwede Utrecht Grid Dashboard</h1>
+  <h2>Simulation controls</h2>
 
-  <p>Simulation status: <span id="run_state">Loading...</span></p>
+  <p><b>Simulation status:</b> <span id="run_state">Loading...</span></p>
   <p>
     <button id="runBtn" class="stopped">Run</button>
+    <label for="slider">Simulation speed: <span id="speedslider_value">128</span></label>
+    <input type="range" id="runspeed_slider" min="0" max="255" value="128">
   </p>
+
+  <h2>Load controls</h2>
+  <h2>Environment controls</h2>
 
   <script>
 
     const runBtn = document.getElementById('runBtn');
 
+    const speed_slider = document.getElementById('runspeed_slider');
+    const slider_valuedisplay = document.getElementById('speedslider_value');
+
     runBtn.addEventListener('click', async function () {
       // Just send the opposite of current state
       const desiredState = runBtn.classList.contains('running') ? 'stop' : 'run';
       await playPauze(desiredState); // This also calls updateStates()
+    });
+
+    speed_slider.addEventListener('change', async function () {
+      const value = speed_slider.value;
+      slider_valuedisplay.textContent = value;
+      
+      try {
+        await fetch(`/set_value?value=${value}`);  
+      } catch (e) {
+        console.error("Failed to send slider value:", e);
+      }
     });
 
     async function updateStates() {

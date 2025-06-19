@@ -33,6 +33,7 @@ String header;
 String output2State = "off";
 String output27State = "off";
 String runState = "Stopped";
+int sliderValue = 0;
 
 // Simulation states
 bool PV_ON = false;
@@ -42,7 +43,6 @@ bool WP_ON = false;
 bool BMS_ON = false;
 int weatherState = 0; // 0: Sunny, 1: Cloudy+wind, 2: Rainy
 int simulationState = 0; // 0: Custom, 1: Overload, 2: regular
-
 
 // Assign output variables to GPIO pins
 const int output2 = 2; 
@@ -142,9 +142,29 @@ void HTML_handler() {
             else if (header.indexOf("GET /27/on") >= 0) {
               output27State = "on";
               digitalWrite(output27, HIGH);
-            } else if (header.indexOf("GET /27/off") >= 0) {
+            } 
+            
+            else if (header.indexOf("GET /27/off") >= 0) {
               output27State = "off";
               digitalWrite(output27, LOW);
+            }
+
+            // --- Handle slider value ---
+            else if (header.indexOf("GET /set_value/") >= 0) {
+              int startIndex = header.indexOf("/set_value/") + 11;
+              int endIndex = header.indexOf(" ", startIndex); // space after the path
+              String valueStr = header.substring(startIndex, endIndex);
+              sliderValue = valueStr.toInt();
+              sliderValue = constrain(sliderValue, 0, 255);
+
+              Serial.print("Slider value set to: ");
+              Serial.println(sliderValue);
+
+              client.println("HTTP/1.1 200 OK");
+              client.println("Content-Type: text/plain");
+              client.println("Connection: close");
+              client.println();
+              client.println("OK");
             }
 
             // --- Serve JSON with GPIO states ---
@@ -183,7 +203,7 @@ void HTML_handler() {
             } else if (header.indexOf("GET /") >= 0) {
               File file = LittleFS.open("/index.html", "r");
               if (file) {
-                client.println("HTTP/1.1 200 OK");
+                client.println("HTTP/1.1 200 OK");s
                 client.println("Content-Type: text/html");
                 client.println("Connection: close");
                 client.println();
