@@ -34,6 +34,16 @@ String output2State = "off";
 String output27State = "off";
 String runState = "Stopped";
 
+// Simulation states
+bool PV_ON = false;
+bool wind_ON = false;
+bool EV_ON = false;
+bool WP_ON = false;
+bool BMS_ON = false;
+int weatherState = 0; // 0: Sunny, 1: Cloudy+wind, 2: Rainy
+int simulationState = 0; // 0: Custom, 1: Overload, 2: regular
+
+
 // Assign output variables to GPIO pins
 const int output2 = 2; 
 const int output27 = 27;
@@ -139,6 +149,7 @@ void HTML_handler() {
 
             // --- Serve JSON with GPIO states ---
             if (header.indexOf("GET /gpio") >= 0) {
+              Serial.println("Serving GPIO states as JSON");
               client.println("HTTP/1.1 200 OK");
               client.println("Content-Type: application/json");
               client.println("Connection: close");
@@ -151,6 +162,7 @@ void HTML_handler() {
               json += "}";
 
               client.print(json);
+              Serial.println(json);
             }
 
             // --- Serve style.css ---

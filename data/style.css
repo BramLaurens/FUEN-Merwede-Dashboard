@@ -19,8 +19,17 @@ html {
   background-color: #555555;
 }
 
-.run_button {
+#runBtn.stopped {
   background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 16px 40px;
+  font-size: 30px;
+  margin: 2px;
+  cursor: pointer;
+}
+#runBtn.running {
+  background-color: red;
   border: none;
   color: white;
   padding: 16px 40px;

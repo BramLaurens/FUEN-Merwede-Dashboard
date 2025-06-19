@@ -13,18 +13,36 @@
 
   <p>Simulation status: <span id="run_state">Loading...</span></p>
   <p>
-    <button class="button" onclick="playPauze('run')">RUN</button>
-    <button class="button button2" onclick="playPauze('stop')">STOP</button>
+    <button id="runBtn" class="stopped">Run</button>
   </p>
 
   <script>
+
+    const runBtn = document.getElementById('runBtn');
+
+    runBtn.addEventListener('click', async function () {
+      // Just send the opposite of current state
+      const desiredState = runBtn.classList.contains('running') ? 'stop' : 'run';
+      await playPauze(desiredState); // This also calls updateStates()
+    });
+
     async function updateStates() {
       try {
         const res = await fetch('/gpio');
         const data = await res.json();
-        document.getElementById('state2').textContent = data["2"];
-        document.getElementById('state27').textContent = data["27"];
+
         document.getElementById('run_state').textContent = data["runState"];
+
+        if (data["runState"] == "Running") {
+          runBtn.textContent = 'Stop';
+          runBtn.classList.remove('stopped');
+          runBtn.classList.add('running');
+        } else {
+          runBtn.textContent = 'Run';
+          runBtn.classList.remove('running');
+          runBtn.classList.add('stopped');
+        }
+
       } catch (e) {
         console.error("Error fetching GPIO states:", e);
       }
