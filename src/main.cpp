@@ -2,6 +2,7 @@
 #include <LittleFS.h>
 #include <WiFi.h>
 #include <FastLED.h>
+#include <ESPAsyncWebServer.h>
 
 #define HV1_PIN 2 
 #define HV1_NUM_LEDS 53
@@ -23,11 +24,12 @@ CRGB leds3[HV3_NUM_LEDS];
 const char* ssid     = "FUEN-EV2A-1";
 const char* password = "123456789";
 
-// Server port
-WiFiServer server(80);
-
 // Variable to store the HTTP request
 String header;
+
+//Server object
+AsyncWebServer server(80);
+
 
 // Buttonstates
 String output2State = "off";
@@ -105,127 +107,74 @@ void stripOff() {
 }
 
 void HTML_handler() {
- WiFiClient client = server.available();
+ // Serve index.html
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/index.html", "text/html");
+  });
 
-  if (client) {
-    Serial.println("New Client.");
-    String currentLine = "";
-    header = "";
+  // Serve style.css
+  server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/style.css", "text/css");
+  });
 
-    while (client.connected()) {
-      if (client.available()) {
-        char c = client.read();
-        header += c;
+  // JSON endpoint for states
+  server.on("/gpio", HTTP_GET, [](AsyncWebServerRequest *request) {
+    String json = "{";
+    json += "\"runState\":\"" + runState + "\",";
+    json += "\"2\":\"" + output2State + "\",";
+    json += "\"27\":\"" + output27State + "\"";
+    json += "}";
+    request->send(200, "application/json", json);
+    Serial.println("GPIO JSON sent: " + json);
+  });
 
-        if (c == '\n') {
-          if (currentLine.length() == 0) {
+  // Handle run_state
+  server.on("/run_state/run", HTTP_GET, [](AsyncWebServerRequest *request) {
+    runState = "Running";
+    stripBlue();
+    request->send(200, "text/plain", "OK");
+  });
 
-            // --- Handle GPIO commands ---
-            if (header.indexOf("GET /2/on") >= 0) {
-              output2State = "on";
-              digitalWrite(output2, HIGH);
-            } else if (header.indexOf("GET /2/off") >= 0) {
-              output2State = "off";
-              digitalWrite(output2, LOW);
-            } 
+  server.on("/run_state/stop", HTTP_GET, [](AsyncWebServerRequest *request) {
+    runState = "Stopped";
+    stripOff();
+    request->send(200, "text/plain", "OK");
+  });
 
-            else if (header.indexOf("GET /run_state/run") >= 0) {
-              runState = "Running";
-              stripBlue();  // Turn on the blue strip
-            }
+  // GPIO control
+  server.on("/2/on", HTTP_GET, [](AsyncWebServerRequest *request) {
+    output2State = "on";
+    digitalWrite(output2, HIGH);
+    request->send(200, "text/plain", "OK");
+  });
 
-            else if (header.indexOf("GET /run_state/stop") >= 0) {
-              runState = "Stopped";
-              stripOff();  // Turn off the strip
-            }
+  server.on("/2/off", HTTP_GET, [](AsyncWebServerRequest *request) {
+    output2State = "off";
+    digitalWrite(output2, LOW);
+    request->send(200, "text/plain", "OK");
+  });
 
-            else if (header.indexOf("GET /27/on") >= 0) {
-              output27State = "on";
-              digitalWrite(output27, HIGH);
-            } 
-            
-            else if (header.indexOf("GET /27/off") >= 0) {
-              output27State = "off";
-              digitalWrite(output27, LOW);
-            }
+  server.on("/27/on", HTTP_GET, [](AsyncWebServerRequest *request) {
+    output27State = "on";
+    digitalWrite(output27, HIGH);
+    request->send(200, "text/plain", "OK");
+  });
 
-            // --- Handle slider value ---
-            else if (header.indexOf("GET /set_value/") >= 0) {
-              int startIndex = header.indexOf("/set_value/") + 11;
-              int endIndex = header.indexOf(" ", startIndex); // space after the path
-              String valueStr = header.substring(startIndex, endIndex);
-              sliderValue = valueStr.toInt();
-              sliderValue = constrain(sliderValue, 0, 255);
+  server.on("/27/off", HTTP_GET, [](AsyncWebServerRequest *request) {
+    output27State = "off";
+    digitalWrite(output27, LOW);
+    request->send(200, "text/plain", "OK");
+  });
 
-              Serial.print("Slider value set to: ");
-              Serial.println(sliderValue);
-
-              client.println("HTTP/1.1 200 OK");
-              client.println("Content-Type: text/plain");
-              client.println("Connection: close");
-              client.println();
-              client.println("OK");
-            }
-
-            // --- Serve JSON with GPIO states ---
-            if (header.indexOf("GET /gpio") >= 0) {
-              Serial.println("Serving GPIO states as JSON");
-              client.println("HTTP/1.1 200 OK");
-              client.println("Content-Type: application/json");
-              client.println("Connection: close");
-              client.println();
-
-              String json = "{";
-              json += "\"runState\":\"" + runState + "\",";
-              json += "\"2\":\"" + output2State + "\",";
-              json += "\"27\":\"" + output27State + "\"";
-              json += "}";
-
-              client.print(json);
-              Serial.println(json);
-            }
-
-            // --- Serve style.css ---
-            else if (header.indexOf("GET /style.css") >= 0) {
-              File file = LittleFS.open("/style.css", "r");
-              if (file) {
-                client.println("HTTP/1.1 200 OK");
-                client.println("Content-Type: text/css");
-                client.println("Connection: close");
-                client.println();
-                while (file.available()) {
-                  client.write(file.read());
-                }
-                file.close();
-              }
-
-            // --- Serve index.html ---
-            } else if (header.indexOf("GET /") >= 0) {
-              File file = LittleFS.open("/index.html", "r");
-              if (file) {
-                client.println("HTTP/1.1 200 OK");s
-                client.println("Content-Type: text/html");
-                client.println("Connection: close");
-                client.println();
-                while (file.available()) {
-                  client.write(file.read());
-                }
-                file.close();
-              }
-            }
-
-            break;
-          } else {
-            currentLine = "";
-          }
-        } else if (c != '\r') {
-          currentLine += c;
-        }
-      }
+  // Slider value endpoint
+  server.on("/set_value", HTTP_GET, [](AsyncWebServerRequest *request) {
+    if (request->hasParam("value")) {
+      sliderValue = request->getParam("value")->value().toInt();
+      sliderValue = constrain(sliderValue, 0, 255);
+      Serial.printf("Slider value: %d\n", sliderValue);
     }
+    request->send(200, "text/plain", "OK");
+  });
 
-    header = "";
-    client.stop();
-    Serial.println("Client disconnected.");
-  }
+  server.begin();
 }
