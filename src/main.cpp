@@ -83,10 +83,12 @@ void setup() {
   FastLED.addLeds<LED_TYPE, HV2_PIN, COLOR_ORDER>(leds2, HV2_NUM_LEDS);
   FastLED.addLeds<LED_TYPE, HV3_PIN, COLOR_ORDER>(leds3, HV3_NUM_LEDS);
   FastLED.setBrightness(BRIGHTNESS);
+
+  HTML_handler();
+
 }
 
 void loop() {
-  HTML_handler();
 }
 
 void stripBlue() {
@@ -130,7 +132,6 @@ void HTML_handler() {
   // Handle run_state
   server.on("/run_state/run", HTTP_GET, [](AsyncWebServerRequest *request) {
     runState = "Running";
-    stripBlue();
     request->send(200, "text/plain", "OK");
   });
 
