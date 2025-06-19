@@ -3,6 +3,10 @@
 #include <WiFi.h>
 #include <FastLED.h>
 #include <ESPAsyncWebServer.h>
+#include <Adafruit_SSD1306.h>
+#include <Adafruit_GFX.h>
+
+#define houseleds_pin 23
 
 #define HV1_PIN 2 
 #define HV1_NUM_LEDS 53
@@ -50,16 +54,44 @@ int simulationState = 0; // 0: Custom, 1: Overload, 2: regular
 const int output2 = 2; 
 const int output27 = 27;
 
+// Animation variables
+int chase1Index = 0;
+unsigned long last1Update = 0;
+const unsigned long interval1 = 10;
+
+int chase2Index = 0;
+unsigned long last2Update = 0;
+const unsigned long interval2 = 80;
+
+int chase3Index = 0;
+unsigned long last3Update = 0;
+const unsigned long interval3 = 80;
+
+// Display
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+#define OLED_MOSI   22
+#define OLED_CLK   18
+#define OLED_DC    16
+#define OLED_CS    5
+#define OLED_RESET 17
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
+
 // Prototypes
 void HTML_handler();
 void stripBlue();
 void stripOff();
+void HV1_animation();
+void HV2_animation();
+void HV3_animation();
 
 void setup() {
   Serial.begin(115200);
   // Initialize the output variables as outputs
   pinMode(output2, OUTPUT);
   pinMode(output27, OUTPUT);
+  pinMode(houseleds_pin, OUTPUT);
   // Set outputs to LOW
   digitalWrite(output2, LOW);
   digitalWrite(output27, LOW);
@@ -68,6 +100,30 @@ void setup() {
     Serial.println("An error has occurred while mounting LittleFS");
     return;
   }
+
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;); // Don't proceed, loop forever
+  }
+  Serial.println(F("Initialized screen!"));
+
+  display.display();
+  delay(500);
+
+  // Clear the buffer
+  display.clearDisplay();
+  display.display();
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(10, 20);
+  display.setTextSize(1);
+  display.print(F("Merwede"));
+  display.setCursor(10, 50);
+  display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+  display.setTextSize(1);
+  display.print(F("Merwede"));
+ 
+  // Refresh (apply command)
+  display.display();
 
   // Connect to Wi-Fi network with SSID and password
   Serial.print("Setting AP (Access Point)…");
@@ -89,6 +145,13 @@ void setup() {
 }
 
 void loop() {
+
+  if(runState == "Running") {
+    HV1_animation();  // Run the animation function
+    HV2_animation();  // Run the animation function
+    HV3_animation();  // Run the animation function
+    digitalWrite(houseleds_pin, HIGH);  // Turn on the house LEDs
+  }
 }
 
 void stripBlue() {
@@ -105,6 +168,67 @@ void stripOff() {
   fill_solid(leds2, HV2_NUM_LEDS, CRGB::Black);
   fill_solid(leds3, HV3_NUM_LEDS, CRGB::Black);
   FastLED.show();
+  digitalWrite(houseleds_pin, LOW);  // Turn off the house LEDs
+}
+
+void HV1_animation() {
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - last1Update >= interval1) {
+    last1Update = currentMillis;
+
+    // Clear LEDs
+    fadeToBlackBy(leds, HV1_NUM_LEDS, 40);
+
+    // Set the chase pixel
+    leds[chase1Index] = CRGB::Blue;
+
+    // Show the new frame
+    FastLED.show();
+
+    // Advance the chase index
+    chase1Index = (chase1Index + 1) % HV1_NUM_LEDS;
+  }
+}
+
+void HV2_animation() {
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - last2Update >= interval2) {
+    last2Update = currentMillis;
+
+    // Clear LEDs
+    fadeToBlackBy(leds2, HV2_NUM_LEDS, 100);
+
+    // Set the chase pixel
+    leds2[chase2Index] = CRGB::Blue;
+
+    // Show the new frame
+    FastLED.show();
+
+    // Advance the chase index
+    chase2Index = (chase2Index + 1) % HV2_NUM_LEDS;
+  }
+}
+
+void HV3_animation() {
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - last3Update >= interval3) {
+    last3Update = currentMillis;
+
+    // Clear LEDs
+    fadeToBlackBy(leds3, HV3_NUM_LEDS, 100);
+
+    // Set the chase pixel
+    leds3[chase3Index] = CRGB::Blue;
+
+    // Show the new frame
+    FastLED.show();
+
+    // Advance the chase index
+    chase3Index = (chase3Index + 1) % HV3_NUM_LEDS;
+  }
 }
 
 void HTML_handler() {
