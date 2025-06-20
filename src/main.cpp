@@ -21,13 +21,26 @@
 #define HV3_PIN 16
 #define HV3_NUM_LEDS 26
 
-#define LV1_PIN 18
+#define LV1_PIN 17
 #define LV1_NUM_LEDS 8
+
+#define LV2_PIN 5
+#define LV2_NUM_LEDS 8
+
+#define WINDLED_PIN 18
+#define WINDLED_NUM_LEDS 8
+
+#define BATTLED_PIN 19
+#define BATTLED_NUM_LEDS 11
 
 CRGB leds[HV1_NUM_LEDS];
 CRGB leds2[HV2_NUM_LEDS];
 CRGB leds3[HV3_NUM_LEDS];
 CRGB lv_leds1[LV1_NUM_LEDS];
+CRGB lv_leds2[LV2_NUM_LEDS];
+CRGB wind_leds[WINDLED_NUM_LEDS];
+CRGB batt_leds[BATTLED_NUM_LEDS];
+
 
 // Network credentials
 const char* ssid     = "FUEN-EV2A-1";
@@ -72,6 +85,22 @@ int chase3Index = 0;
 unsigned long last3Update = 0;
 const unsigned long interval3 = 80;
 
+int chase4Index = 0;
+unsigned long last4Update = 0;
+const unsigned long interval4 = 80;
+
+int chase5Index = 0;
+unsigned long last5Update = 0;
+const unsigned long interval5 = 80;
+
+int chase6Index = 0;
+unsigned long last6Update = 0;
+const unsigned long interval6 = 80;
+
+int chase7Index = 0;
+unsigned long last7Update = 0;
+const unsigned long interval7 = 80;
+
 
 // Prototypes
 void HTML_handler();
@@ -80,6 +109,14 @@ void stripOff();
 void HV1_animation();
 void HV2_animation();
 void HV3_animation();
+void lv1_animation();
+void lv2_animation();
+void wind_animation();
+void batt_animation();
+
+
+
+
 
 void setup() {
   Serial.begin(115200);
@@ -97,7 +134,7 @@ void setup() {
   }
 
   delay(500);
-  
+
   // Connect to Wi-Fi network with SSID and password
   Serial.print("Setting AP (Access Point)…");
   // Remove the password parameter, if you want the AP (Access Point) to be open
@@ -111,6 +148,11 @@ void setup() {
   FastLED.addLeds<LED_TYPE, HV1_PIN, COLOR_ORDER>(leds, HV1_NUM_LEDS);
   FastLED.addLeds<LED_TYPE, HV2_PIN, COLOR_ORDER>(leds2, HV2_NUM_LEDS);
   FastLED.addLeds<LED_TYPE, HV3_PIN, COLOR_ORDER>(leds3, HV3_NUM_LEDS);
+  FastLED.addLeds<LED_TYPE, LV1_PIN, COLOR_ORDER>(lv_leds1, LV1_NUM_LEDS);
+  FastLED.addLeds<LED_TYPE, LV2_PIN, COLOR_ORDER>(lv_leds2, LV2_NUM_LEDS);
+  FastLED.addLeds<LED_TYPE, WINDLED_PIN, COLOR_ORDER>(wind_leds, WINDLED_NUM_LEDS);
+  FastLED.addLeds<LED_TYPE, BATTLED_PIN, COLOR_ORDER>(batt_leds, BATTLED_NUM_LEDS);
+
   FastLED.setBrightness(BRIGHTNESS);
 
   HTML_handler();
@@ -123,6 +165,10 @@ void loop() {
     HV1_animation();  // Run the animation function
     HV2_animation();  // Run the animation function
     HV3_animation();  // Run the animation function
+    lv1_animation();  // Run the animation function
+    lv2_animation();  // Run the animation function
+    wind_animation(); // Run the animation function
+    batt_animation(); // Run the animation function
     digitalWrite(houseleds_pin, HIGH);  // Turn on the house LEDs
   }
 }
@@ -132,6 +178,7 @@ void stripBlue() {
   fill_solid(leds, HV1_NUM_LEDS, CRGB::Blue);  // Options: Red, Green, Blue, etc.
   fill_solid(leds2, HV2_NUM_LEDS, CRGB::Blue);  // Options: Red, Green, Blue, etc.
   fill_solid(leds3, HV3_NUM_LEDS, CRGB::Blue);  // Options: Red, Green, Blue, etc.
+  fill_solid(lv_leds1, LV1_NUM_LEDS, CRGB::Blue);  // Options: Red, Green, Blue, etc.
   FastLED.show();  // Send data to the strip
 }
 
@@ -140,6 +187,7 @@ void stripOff() {
   fill_solid(leds, HV1_NUM_LEDS, CRGB::Black);
   fill_solid(leds2, HV2_NUM_LEDS, CRGB::Black);
   fill_solid(leds3, HV3_NUM_LEDS, CRGB::Black);
+  fill_solid(lv_leds1, LV1_NUM_LEDS, CRGB::Black);
   FastLED.show();
   digitalWrite(houseleds_pin, LOW);  // Turn off the house LEDs
 }
@@ -201,6 +249,86 @@ void HV3_animation() {
 
     // Advance the chase index
     chase3Index = (chase3Index + 1) % HV3_NUM_LEDS;
+  }
+}
+
+void lv1_animation() {
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - last4Update >= interval4) {
+    last4Update = currentMillis;
+
+    // Clear LEDs
+    fadeToBlackBy(lv_leds1, LV1_NUM_LEDS, 100);
+
+    // Set the chase pixel
+    lv_leds1[chase4Index] = CRGB::Blue;
+
+    // Show the new frame
+    FastLED.show();
+
+    // Advance the chase index
+    chase4Index = (chase4Index + 1) % LV1_NUM_LEDS;
+  }
+}
+
+void lv2_animation() {
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - last5Update >= interval5) {
+    last5Update = currentMillis;
+
+    // Clear LEDs
+    fadeToBlackBy(lv_leds2, LV2_NUM_LEDS, 100);
+
+    // Set the chase pixel
+    lv_leds2[chase5Index] = CRGB::Blue;
+
+    // Show the new frame
+    FastLED.show();
+
+    // Advance the chase index
+    chase5Index = (chase5Index + 1) % LV2_NUM_LEDS;
+  }
+}
+
+void wind_animation() {
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - last6Update >= interval6) {
+    last6Update = currentMillis;
+
+    // Clear LEDs
+    fadeToBlackBy(wind_leds, WINDLED_NUM_LEDS, 100);
+
+    // Set the chase pixel
+    wind_leds[chase6Index] = CRGB::Blue;
+
+    // Show the new frame
+    FastLED.show();
+
+    // Advance the chase index
+    chase6Index = (chase6Index + 1) % WINDLED_NUM_LEDS;
+  }
+}
+
+void batt_animation() {
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - last7Update >= interval7) {
+    last7Update = currentMillis;
+
+    // Clear LEDs
+    fadeToBlackBy(batt_leds, BATTLED_NUM_LEDS, 100);
+
+    // Set the chase pixel
+    batt_leds[chase7Index] = CRGB::Blue;
+
+    // Show the new frame
+    FastLED.show();
+
+    // Advance the chase index
+    chase7Index = (chase7Index + 1) % BATTLED_NUM_LEDS;
   }
 }
 
