@@ -21,9 +21,13 @@
 #define HV3_PIN 16
 #define HV3_NUM_LEDS 26
 
+#define LV1_PIN 18
+#define LV1_NUM_LEDS 8
+
 CRGB leds[HV1_NUM_LEDS];
 CRGB leds2[HV2_NUM_LEDS];
 CRGB leds3[HV3_NUM_LEDS];
+CRGB lv_leds1[LV1_NUM_LEDS];
 
 // Network credentials
 const char* ssid     = "FUEN-EV2A-1";
@@ -68,22 +72,6 @@ int chase3Index = 0;
 unsigned long last3Update = 0;
 const unsigned long interval3 = 80;
 
-// Display
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-
-// #define OLED_MOSI   22
-// #define OLED_CLK   18
-#define OLED_DC    16
-#define OLED_CS    5
-#define OLED_RESET 17
-
-#define OLED_CS2   4
-#define OLED_RESET2 21
-
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, OLED_DC, OLED_RESET, OLED_CS);
-Adafruit_SSD1306 display2(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, OLED_DC, OLED_RESET2, OLED_CS2);
-
 
 // Prototypes
 void HTML_handler();
@@ -108,49 +96,8 @@ void setup() {
     return;
   }
 
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-    Serial.println(F("SSD1306 allocation failed"));
-  }
-
-  if (!display2.begin(SSD1306_SWITCHCAPVCC)) {
-    Serial.println(F("Display 2 allocation failed"));
-  }
-
-  Serial.println(F("Initialized screens!"));
-
-  display.display();
-  display2.display();
-
   delay(500);
-
-  // Clear the buffer
-  display.clearDisplay();
-  display.display();
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(10, 20);
-  display.setTextSize(1);
-  display.print(F("Merwede"));
-  display.setCursor(10, 50);
-  display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
-  display.setTextSize(1);
-  display.print(F("Merwede"));
-
-  display2.clearDisplay();
-  display2.display();
-  display2.setTextColor(SSD1306_WHITE);
-  display2.setCursor(10, 20);
-  display2.setTextSize(1);
-  display2.print(F("Merwede"));
-  display2.setCursor(10, 50);
-  display2.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
-  display2.setTextSize(1);
-  display2.print(F("Merwede"));
- 
-  // Refresh (apply command)
-  display.display();
-  display2.display();
-
-
+  
   // Connect to Wi-Fi network with SSID and password
   Serial.print("Setting AP (Access Point)…");
   // Remove the password parameter, if you want the AP (Access Point) to be open
