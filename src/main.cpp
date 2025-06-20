@@ -5,6 +5,7 @@
 #include <ESPAsyncWebServer.h>
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
+#include <SPI.h>
 
 #define houseleds_pin 23
 
@@ -71,12 +72,18 @@ const unsigned long interval3 = 80;
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
-#define OLED_MOSI   22
-#define OLED_CLK   18
+// #define OLED_MOSI   22
+// #define OLED_CLK   18
 #define OLED_DC    16
 #define OLED_CS    5
 #define OLED_RESET 17
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
+
+#define OLED_CS2   4
+#define OLED_RESET2 21
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, OLED_DC, OLED_RESET, OLED_CS);
+Adafruit_SSD1306 display2(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, OLED_DC, OLED_RESET2, OLED_CS2);
+
 
 // Prototypes
 void HTML_handler();
@@ -103,11 +110,17 @@ void setup() {
 
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     Serial.println(F("SSD1306 allocation failed"));
-    for(;;); // Don't proceed, loop forever
   }
-  Serial.println(F("Initialized screen!"));
+
+  if (!display2.begin(SSD1306_SWITCHCAPVCC)) {
+    Serial.println(F("Display 2 allocation failed"));
+  }
+
+  Serial.println(F("Initialized screens!"));
 
   display.display();
+  display2.display();
+
   delay(500);
 
   // Clear the buffer
@@ -121,9 +134,22 @@ void setup() {
   display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
   display.setTextSize(1);
   display.print(F("Merwede"));
+
+  display2.clearDisplay();
+  display2.display();
+  display2.setTextColor(SSD1306_WHITE);
+  display2.setCursor(10, 20);
+  display2.setTextSize(1);
+  display2.print(F("Merwede"));
+  display2.setCursor(10, 50);
+  display2.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+  display2.setTextSize(1);
+  display2.print(F("Merwede"));
  
   // Refresh (apply command)
   display.display();
+  display2.display();
+
 
   // Connect to Wi-Fi network with SSID and password
   Serial.print("Setting AP (Access Point)…");
