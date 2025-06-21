@@ -5,6 +5,21 @@ html {
   display: inline-block;
 }
 
+body {
+  margin: 0;
+}
+
+h1 {
+  background-color: #004080; /* Choose any color you want */
+  color: white;              /* Make text contrast with background */
+  padding: 20px;             /* Add padding inside the rectangle */
+  margin: 0;                 /* Remove margin if you want it flush to the top */
+  font-size: 2em;            /* Optional: adjust size */
+  text-align: center;        /* Optional: center text */
+  width: 100vw;
+  box-sizing: border-box;
+}
+
 .button {
   background-color: #4CAF50;
   border: none;
@@ -90,6 +105,26 @@ html {
 }
 
 #evBtn.evon {
+  background-color: red;
+  border: none;
+  color: white;
+  padding: 16px 40px;
+  font-size: 30px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+#hpBtn.hpoff {
+  background-color: #471396;
+  border: none;
+  color: white;
+  padding: 16px 40px;
+  font-size: 20px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+#hpBtn.hpon {
   background-color: red;
   border: none;
   color: white;

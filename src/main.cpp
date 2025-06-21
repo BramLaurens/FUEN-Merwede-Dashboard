@@ -67,15 +67,16 @@ AsyncWebServer server(80);
 // Buttonstates
 String output2State = "off";
 String output27State = "off";
-String runState = "Stopped";
 int sliderValue = 0;
 
 // Simulation states
-bool PV_ON = false;
-bool wind_ON = false;
-bool EV_ON = false;
-bool WP_ON = false;
-bool BMS_ON = false;
+String runState = "Stopped";
+String pvState = "off"; // PV state
+String windState = "off"; // Wind state
+String evState = "off"; // EV state
+String hpState = "off"; // hp state
+String battState = "off"; // batt state
+
 int weatherState = 0; // 0: Sunny, 1: Cloudy+wind, 2: Rainy
 int simulationState = 0; // 0: Custom, 1: Overload, 2: regular
 
@@ -181,7 +182,7 @@ void loop() {
     // Run simulation if Running state is set
     simRunning();
   }
-  
+
 }
 void displayUART(char code, long value) {
   // Send data to the display MCU via SerialUART
@@ -381,6 +382,11 @@ void HTML_handler() {
     json += "\"runState\":\"" + runState + "\",";
     json += "\"2\":\"" + output2State + "\",";
     json += "\"27\":\"" + output27State + "\"";
+    json += "\"pvState\":\"" + pvState + "\"";
+    json += "\"windState\":\"" + windState + "\"";
+    json += "\"evState\":\"" + evState + "\"";
+    json += "\"hpState\":\"" + hpState + "\"";
+    json += "\"battState\":\"" + battState + "\"";
     json += "}";
     request->send(200, "application/json", json);
     Serial.println("GPIO JSON sent: " + json);
@@ -400,42 +406,42 @@ void HTML_handler() {
 
   // Handle load control HTTPS requests
   server.on("/pv/off", HTTP_GET, [](AsyncWebServerRequest *request) {
-    PV_ON = false;
+    pvState = "off";
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/pv/on", HTTP_GET, [](AsyncWebServerRequest *request) {
-    PV_ON = true;
+    pvState = "On";
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/wind/off", HTTP_GET, [](AsyncWebServerRequest *request) {
-    wind_ON = false;
+    windState = "off";
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/wind/on", HTTP_GET, [](AsyncWebServerRequest *request) {
-    wind_ON = true;
+    windState = "On";
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/ev/off", HTTP_GET, [](AsyncWebServerRequest *request) {
-    EV_ON = false;
+    evState = "off";
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/ev/on", HTTP_GET, [](AsyncWebServerRequest *request) {
-    EV_ON = true;
+    evState = "On";
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/batt/off", HTTP_GET, [](AsyncWebServerRequest *request) {
-    WP_ON = false;
+    battState = "off";
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/batt/on", HTTP_GET, [](AsyncWebServerRequest *request) {
-    WP_ON = true;
+    battState = "on";
     request->send(200, "text/plain", "OK");
   });
 

@@ -8,7 +8,7 @@
   <title>Merwede Utrecht 10kV Grid Dashboard</title>
 </head>
 <body>
-  <h1>Merwede Utrecht Grid Dashboard</h1>
+  <h1><span id="title">Merwede Utrecht Grid Dashboard</span></h1>
   <h2>Simulation controls</h2>
 
   <p><b>Simulation status:</b> <span id="run_state">Loading...</span></p>
@@ -23,6 +23,7 @@
     <button id="pvBtn" class="pvoff">PV On</button>
     <button id="windBtn" class="windoff">Wind On</button>
     <button id="evBtn" class="evoff">EV On</button>
+    <button id="hpBtn" class="hpoff">Heat Pump On</button>
     <button id="battBtn" class="battoff">Battery On</button>
   </p>
   <h2>Environment controls</h2>
@@ -33,6 +34,7 @@
     const pvBtn = document.getElementById('pvBtn');
     const windBtn = document.getElementById('windBtn');
     const evBtn = document.getElementById('evBtn');
+    const hpBtn = document.getElementById('hpBtn'); // Heat Pump button, not used in this example
     const battBtn = document.getElementById('battBtn');
 
     const speed_slider = document.getElementById('runspeed_slider');
@@ -56,6 +58,11 @@
     evBtn.addEventListener('click', async function () {
       const desiredState = evBtn.classList.contains('evon') ? 'off' : 'on';
       await evClick(desiredState); // This also calls updateStates()
+    });
+
+    evBtn.addEventListener('click', async function () {
+      const desiredState = evBtn.classList.contains('hpon') ? 'off' : 'on';
+      await hpClick(desiredState); // This also calls updateStates()
     });
 
     battBtn.addEventListener('click', async function () {
@@ -121,6 +128,16 @@
           evBtn.classList.add('evoff');
         }
 
+        if (data["hpState"] == "On") {
+          evBtn.textContent = 'Heat Pump Off';
+          evBtn.classList.remove('hpoff');
+          evBtn.classList.add('hpon');
+        } else {
+          evBtn.textContent = 'Heat Pump On';
+          evBtn.classList.remove('hpon');
+          evBtn.classList.add('hpoff');
+        }
+
         if (data["battState"] == "On") {
           battBtn.textContent = 'Battery Off';
           battBtn.classList.remove('battoff');
@@ -169,6 +186,15 @@
         await updateStates();              // then update state display
       } catch (e) {
         console.error("Failed to change ev state:", e);
+      }
+    }
+
+    async function hpClick(state) {
+      try {
+        await fetch(`/hp/${state}`);   // send command to ESP32
+        await updateStates();              // then update state display
+      } catch (e) {
+        console.error("Failed to change hp state:", e);
       }
     }
 
