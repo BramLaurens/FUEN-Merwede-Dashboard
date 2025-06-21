@@ -43,6 +43,11 @@ CRGB lv_leds2[LV2_NUM_LEDS];
 CRGB wind_leds[WINDLED_NUM_LEDS];
 CRGB batt_leds[BATTLED_NUM_LEDS];
 
+/* General idea:
+- Kleuren voor spanning
+- Snelheid ledjes voor transportcapaciteit / afnamae
+- Vermogen update elk uur*/
+
 
 // Network credentials
 const char* ssid     = "FUEN-EV2A-1";
@@ -106,6 +111,10 @@ int chase7Index = 0;
 unsigned long last7Update = 0;
 const unsigned long interval7 = 80;
 
+// Simulation timing variables
+unsigned long last_hourupdate = 0;
+const unsigned long simInterval = 1000; //Simulation speed in ms per step
+int currentHour = 0;
 
 // Prototypes
 void HTML_handler();
@@ -119,6 +128,7 @@ void lv2_animation();
 void wind_animation();
 void batt_animation();
 void simRunning();
+void simSteps();
 
 HardwareSerial SerialUART(2); // Create a HardwareSerial object for SerialUART
 
@@ -166,19 +176,8 @@ void setup() {
 void loop() {
 
   if(runState == "Running") {
-    HV1_animation();  // Run the animation function
-    HV2_animation();  // Run the animation function
-    HV3_animation();  // Run the animation function
-    lv1_animation();  // Run the animation function
-    lv2_animation();  // Run the animation function
-    wind_animation(); // Run the animation function
-    batt_animation(); // Run the animation function
-    digitalWrite(houseleds_pin, HIGH);  // Turn on the house LEDs
-    digitalWrite(smoke_pin, HIGH);  // Turn on the smoke pin
-
-    Serial.println("Sending test message to SerialUART...");
+    simRunning();
     SerialUART.println("FILL");
-    delay(100); // Delay to ensure the message is sent
   }
 }
 
@@ -344,10 +343,17 @@ void batt_animation() {
 }
 
 void simRunning() {
+  // Simulation timing framework
+  unsigned long currentTime = millis();
 
-  if (PV_ON){
-    
+  if(currentTime - last_hourupdate > simInterval){
+     currentHour++;
   }
+
+}
+
+void simSteps(){
+  // Steps to be executed every hour
 }
 
 void HTML_handler() {
