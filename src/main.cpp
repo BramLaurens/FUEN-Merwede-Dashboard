@@ -359,6 +359,9 @@ void simRunning() {
      currentHour++;
   }
 
+  if(currentHour >= 24) {
+    currentHour = 0; // Reset to 0 after 24 hours
+  }
 }
 
 void simSteps(){
@@ -387,6 +390,7 @@ void HTML_handler() {
     json += "\"evState\":\"" + evState + "\"";
     json += "\"hpState\":\"" + hpState + "\"";
     json += "\"battState\":\"" + battState + "\"";
+    json += ",\"hourValue\":" + currentHour;
     json += "}";
     request->send(200, "application/json", json);
     Serial.println("GPIO JSON sent: " + json);

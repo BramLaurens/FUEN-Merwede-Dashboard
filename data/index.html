@@ -8,7 +8,7 @@
   <title>Merwede Utrecht 10kV Grid Dashboard</title>
 </head>
 <body>
-  <h1><span id="title">Merwede Utrecht Grid Dashboard</span></h1>
+  <h1><span id="title">Merwede Utrecht Grid Dashboard   </span></h1>
   <h2>Simulation controls</h2>
 
   <p><b>Simulation status:</b> <span id="run_state">Loading...</span></p>
@@ -26,7 +26,8 @@
     <button id="hpBtn" class="hpoff">Heat Pump On</button>
     <button id="battBtn" class="battoff">Battery On</button>
   </p>
-  <h2>Environment controls</h2>
+  <h2>Simulation parameters</h2>
+  <h3 id="currentHour">00:00</h3>
 
   <script>
 
@@ -85,8 +86,11 @@
       try {
         const res = await fetch('/gpio');
         const data = await res.json();
+        const currentHour = document.getElementById('currentHour');
 
         document.getElementById('run_state').textContent = data["runState"];
+
+        currentHour.textContent = data["currentHour"];
 
         if (data["runState"] == "Running") {
           runBtn.textContent = 'Stop';
