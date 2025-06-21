@@ -54,7 +54,7 @@ String header;
 AsyncWebServer server(80);
 
 // Hardware serial object
-HardwareSerial SerialUART(2);
+// HardwareSerial SerialUART(2);
 
 
 // Buttonstates
@@ -124,7 +124,7 @@ void batt_animation();
 
 void setup() {
   Serial.begin(115200);
-  SerialUART.begin(115200, SERIAL_8N1, 26, 27); // Initialize hardware serial on pins 26 (RX) and 27 (TX)
+  Serial2.begin(115200, SERIAL_8N1, 26, 27); // Initialize hardware serial on pins 26 (RX) and 27 (TX)
   Serial.println("Starting...");
 
   // Initialize the output variables as outputs
@@ -179,7 +179,7 @@ void loop() {
     digitalWrite(houseleds_pin, HIGH);  // Turn on the house LEDs
 
     Serial.println("Sending test message to SerialUART...");
-    SerialUART.println("FILL");
+    Serial2.println("FILL");
     delay(100); // Delay to ensure the message is sent
   }
 }
