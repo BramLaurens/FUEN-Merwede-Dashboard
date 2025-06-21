@@ -126,9 +126,6 @@ void setup() {
   Serial.begin(115200);
   SerialUART.begin(115200, SERIAL_8N1, 26, 27); // Initialize hardware serial on pins 26 (RX) and 27 (TX)
   Serial.println("Starting...");
-  Serial.println("Sending test message to SerialUART...");
-  SerialUART.print("RED");
-  delay(500); // Wait for a second to ensure the message is sent
 
   // Initialize the output variables as outputs
   pinMode(output2, OUTPUT);
@@ -170,6 +167,9 @@ void setup() {
 }
 
 void loop() {
+
+  Serial.println("Sending test message to SerialUART...");
+  SerialUART.print("WHITE");
 
   if(runState == "Running") {
     HV1_animation();  // Run the animation function
