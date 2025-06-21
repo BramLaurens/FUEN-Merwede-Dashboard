@@ -105,4 +105,5 @@ void loop() {
       display2.clearDisplay();
       display.fillScreen(SSD1306_WHITE);
     }
+  }
 }
