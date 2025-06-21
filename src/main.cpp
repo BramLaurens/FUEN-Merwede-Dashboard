@@ -111,6 +111,34 @@ int chase7Index = 0;
 unsigned long last7Update = 0;
 const unsigned long interval7 = 80;
 
+// Model contents
+float consumption_profile_base[24] = {
+        600000,  // 00:00
+        500000,  // 01:00
+        450000,  // 02:00
+        450000,  // 03:00
+        550000,  // 04:00
+        1500000, // 05:00 (start morning peak)
+        3000000, // 06:00
+        4500000, // 07:00
+        3500000, // 08:00
+        2000000, // 09:00 (end morning peak)
+        1500000, // 10:00
+        1300000, // 11:00
+        1400000, // 12:00
+        1350000, // 13:00
+        1450000, // 14:00
+        1600000, // 15:00
+        2000000, // 16:00
+        3500000, // 17:00 (start evening peak)
+        4800000, // 18:00
+        5000000, // 19:00 (peak of the day)
+        4000000, // 20:00
+        2500000, // 21:00 (end evening peak)
+        1500000, // 22:00
+        900000   // 23:00
+};
+
 // Simulation timing variables
 unsigned long last_hourupdate = 0;
 const unsigned long simInterval = 1000; //Simulation speed in ms per step
