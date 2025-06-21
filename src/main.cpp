@@ -6,6 +6,10 @@
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
 #include <SPI.h>
+#include <HardwareSerial.h>
+
+// Hardware Serial object
+HardwareSerial SerialUART(2); // Use UART2 for communication
 
 // Buttonstates
 String output2State = "off";
@@ -40,6 +44,7 @@ Adafruit_SSD1306 display2(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, OLED_DC, OLED_RESET
 
 void setup() {
   Serial.begin(115200);
+  SerialUART.begin(115200, SERIAL_8N1, 26, 27); // Initialize UART2 with RX on GPIO 26 and TX on GPIO 27
 
   if (!LittleFS.begin()) {
     Serial.println("An error has occurred while mounting LittleFS");
@@ -91,4 +96,13 @@ void setup() {
 }
 
 void loop() {
+  if(SerialUART.available()) {
+    String command = SerialUART.readStringUntil('\n');
+    Serial.println("Received command: " + command);
+
+    if (command == "FILL"){
+      display.clearDisplay();
+      display2.clearDisplay();
+      display.fillScreen(SSD1306_WHITE);
+    }
 }
