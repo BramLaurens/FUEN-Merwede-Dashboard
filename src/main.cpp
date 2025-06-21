@@ -9,6 +9,7 @@
 #include <HardwareSerial.h>
 
 #define houseleds_pin 23
+#define smoke_pin 22
 
 #define HV1_PIN 2 
 #define HV1_NUM_LEDS 53
@@ -129,6 +130,7 @@ void setup() {
 
   // Initialize the output variables as outputs
   pinMode(houseleds_pin, OUTPUT);
+  pinMode(smoke_pin, OUTPUT);
   // Set outputs to LOW
 
   if (!LittleFS.begin()) {
@@ -173,6 +175,7 @@ void loop() {
     wind_animation(); // Run the animation function
     batt_animation(); // Run the animation function
     digitalWrite(houseleds_pin, HIGH);  // Turn on the house LEDs
+    digitalWrite(smoke_pin, HIGH);  // Turn on the smoke pin
 
     Serial.println("Sending test message to SerialUART...");
     SerialUART.println("FILL");
@@ -197,6 +200,8 @@ void stripOff() {
   fill_solid(lv_leds1, LV1_NUM_LEDS, CRGB::Black);
   FastLED.show();
   digitalWrite(houseleds_pin, LOW);  // Turn off the house LEDs
+  digitalWrite(smoke_pin, LOW);  // Turn on the smoke pin
+
 }
 
 void HV1_animation() {
