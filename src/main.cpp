@@ -6,6 +6,7 @@
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
 #include <SPI.h>
+#include <HardwareSerial.h>
 
 #define houseleds_pin 23
 
@@ -51,6 +52,9 @@ String header;
 
 //Server object
 AsyncWebServer server(80);
+
+// Hardware serial object
+HardwareSerial SerialUART(2);
 
 
 // Buttonstates
@@ -120,6 +124,12 @@ void batt_animation();
 
 void setup() {
   Serial.begin(115200);
+  SerialUART.begin(115200, SERIAL_8N1, 26, 27); // Initialize hardware serial on pins 26 (RX) and 27 (TX)
+  Serial.println("Starting...");
+  Serial.println("Sending test message to SerialUART...");
+  SerialUART.print("RED");
+  delay(500); // Wait for a second to ensure the message is sent
+
   // Initialize the output variables as outputs
   pinMode(output2, OUTPUT);
   pinMode(output27, OUTPUT);
