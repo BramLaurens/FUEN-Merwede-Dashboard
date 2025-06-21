@@ -180,8 +180,8 @@ void loop() {
   if(runState == "Running") {
     // Run simulation if Running state is set
     simRunning();
-    SerialUART.println("FILL");
   }
+  
 }
 void displayUART(char code, long value) {
   // Send data to the display MCU via SerialUART
