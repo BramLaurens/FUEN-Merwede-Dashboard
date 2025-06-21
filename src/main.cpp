@@ -98,8 +98,10 @@ void setup() {
 }
 
 void loop() {
+
   if(SerialUART.available()) {
     String command = SerialUART.readStringUntil('\n');
+    command.trim(); // Remove any trailing newline or spaces
     Serial.println("Received command: " + command);
 
     if (command == "FILL"){
