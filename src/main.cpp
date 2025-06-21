@@ -118,10 +118,9 @@ void lv1_animation();
 void lv2_animation();
 void wind_animation();
 void batt_animation();
-
+void simRunning();
 
 HardwareSerial SerialUART(2); // Create a HardwareSerial object for SerialUART
-
 
 void setup() {
   Serial.begin(115200);
@@ -341,6 +340,13 @@ void batt_animation() {
 
     // Advance the chase index
     chase7Index = (chase7Index + 1) % BATTLED_NUM_LEDS;
+  }
+}
+
+void simRunning() {
+
+  if (PV_ON){
+    
   }
 }
 
