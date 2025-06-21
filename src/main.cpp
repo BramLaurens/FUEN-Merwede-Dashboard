@@ -130,6 +130,7 @@ void wind_animation();
 void batt_animation();
 void simRunning();
 void simSteps();
+void displayUART(char code, long value);
 
 HardwareSerial SerialUART(2); // Create a HardwareSerial object for SerialUART
 
@@ -181,6 +182,11 @@ void loop() {
     simRunning();
     SerialUART.println("FILL");
   }
+}
+void displayUART(char code, long value) {
+  // Send data to the display MCU via SerialUART
+  SerialUART.print(code);
+  SerialUART.println(value);
 }
 
 void stripBlue() {
