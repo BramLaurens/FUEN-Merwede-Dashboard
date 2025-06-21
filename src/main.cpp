@@ -168,8 +168,7 @@ void setup() {
 
 void loop() {
 
-  Serial.println("Sending test message to SerialUART...");
-  SerialUART.print("WHITE");
+  
 
   if(runState == "Running") {
     HV1_animation();  // Run the animation function
@@ -180,6 +179,9 @@ void loop() {
     wind_animation(); // Run the animation function
     batt_animation(); // Run the animation function
     digitalWrite(houseleds_pin, HIGH);  // Turn on the house LEDs
+
+    Serial.println("Sending test message to SerialUART...");
+    SerialUART.print("WHITE");
   }
 }
 
