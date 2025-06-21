@@ -136,15 +136,6 @@
       }
     }
 
-    async function setGPIO(pin, state) {
-      try {
-        await fetch(`/${pin}/${state}`);   // send command to ESP32
-        await updateStates();              // then update state display
-      } catch (e) {
-        console.error("Failed to set GPIO:", e);
-      }
-    }
-
     async function playPauze(state) {
       try {
         await fetch(`/run_state/${state}`);   // send command to ESP32

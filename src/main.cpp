@@ -378,24 +378,44 @@ void HTML_handler() {
     request->send(200, "text/plain", "OK");
   });
 
-  // GPIO control
-  server.on("/2/on", HTTP_GET, [](AsyncWebServerRequest *request) {
-    output2State = "on";
+  // Handle load control HTTPS requests
+  server.on("/pv/off", HTTP_GET, [](AsyncWebServerRequest *request) {
+    PV_ON = false;
     request->send(200, "text/plain", "OK");
   });
 
-  server.on("/2/off", HTTP_GET, [](AsyncWebServerRequest *request) {
-    output2State = "off";
+  server.on("/pv/on", HTTP_GET, [](AsyncWebServerRequest *request) {
+    PV_ON = true;
     request->send(200, "text/plain", "OK");
   });
 
-  server.on("/27/on", HTTP_GET, [](AsyncWebServerRequest *request) {
-    output27State = "on";
+  server.on("/wind/off", HTTP_GET, [](AsyncWebServerRequest *request) {
+    wind_ON = false;
     request->send(200, "text/plain", "OK");
   });
 
-  server.on("/27/off", HTTP_GET, [](AsyncWebServerRequest *request) {
-    output27State = "off";
+  server.on("/wind/on", HTTP_GET, [](AsyncWebServerRequest *request) {
+    wind_ON = true;
+    request->send(200, "text/plain", "OK");
+  });
+
+  server.on("/ev/off", HTTP_GET, [](AsyncWebServerRequest *request) {
+    EV_ON = false;
+    request->send(200, "text/plain", "OK");
+  });
+
+  server.on("/ev/on", HTTP_GET, [](AsyncWebServerRequest *request) {
+    EV_ON = true;
+    request->send(200, "text/plain", "OK");
+  });
+
+  server.on("/batt/off", HTTP_GET, [](AsyncWebServerRequest *request) {
+    WP_ON = false;
+    request->send(200, "text/plain", "OK");
+  });
+
+  server.on("/batt/on", HTTP_GET, [](AsyncWebServerRequest *request) {
+    WP_ON = true;
     request->send(200, "text/plain", "OK");
   });
 
