@@ -19,19 +19,48 @@
   </p>
 
   <h2>Load controls</h2>
+  <p>
+    <button id="pvBtn" class="pvoff">PV On</button>
+    <button id="windBtn" class="windoff">Wind On</button>
+    <button id="evBtn" class="evoff">EV On</button>
+    <button id="battBtn" class="battoff">Battery On</button>
+  </p>
   <h2>Environment controls</h2>
 
   <script>
 
     const runBtn = document.getElementById('runBtn');
+    const pvBtn = document.getElementById('pvBtn');
+    const windBtn = document.getElementById('windBtn');
+    const evBtn = document.getElementById('evBtn');
+    const battBtn = document.getElementById('battBtn');
 
     const speed_slider = document.getElementById('runspeed_slider');
     const slider_valuedisplay = document.getElementById('speedslider_value');
 
     runBtn.addEventListener('click', async function () {
-      // Just send the opposite of current state
       const desiredState = runBtn.classList.contains('running') ? 'stop' : 'run';
       await playPauze(desiredState); // This also calls updateStates()
+    });
+
+    pvBtn.addEventListener('click', async function () {
+      const desiredState = pvBtn.classList.contains('pvon') ? 'off' : 'on';
+      await pvClick(desiredState); // This also calls updateStates()
+    });
+
+    windBtn.addEventListener('click', async function () {
+      const desiredState = windBtn.classList.contains('windon') ? 'off' : 'on';
+      await windClick(desiredState); // This also calls updateStates()
+    });
+
+    evBtn.addEventListener('click', async function () {
+      const desiredState = evBtn.classList.contains('evon') ? 'off' : 'on';
+      await evClick(desiredState); // This also calls updateStates()
+    });
+
+    battBtn.addEventListener('click', async function () {
+      const desiredState = battBtn.classList.contains('batton') ? 'off' : 'on';
+      await battClick(desiredState); // This also calls updateStates()
     });
 
     speed_slider.addEventListener('change', async function () {
@@ -62,6 +91,46 @@
           runBtn.classList.add('stopped');
         }
 
+        if (data["pvState"] == "On") {
+          pvBtn.textContent = 'PV Off';
+          pvBtn.classList.remove('pvoff');
+          pvBtn.classList.add('pvon');
+        } else {
+          pvBtn.textContent = 'PV On';
+          pvBtn.classList.remove('pvon');
+          pvBtn.classList.add('pvoff');
+        }
+
+        if (data["windState"] == "On") {
+          windBtn.textContent = 'Wind Off';
+          windBtn.classList.remove('windoff');
+          windBtn.classList.add('windon');
+        } else {
+          windBtn.textContent = 'Wind On';
+          windBtn.classList.remove('windon');
+          windBtn.classList.add('windoff');
+        }
+
+        if (data["evState"] == "On") {
+          evBtn.textContent = 'EV Off';
+          evBtn.classList.remove('evoff');
+          evBtn.classList.add('evon');
+        } else {
+          evBtn.textContent = 'EV On';
+          evBtn.classList.remove('evon');
+          evBtn.classList.add('evoff');
+        }
+
+        if (data["battState"] == "On") {
+          battBtn.textContent = 'Battery Off';
+          battBtn.classList.remove('battoff');
+          battBtn.classList.add('batton');
+        } else {
+          battBtn.textContent = 'Battery On';
+          battBtn.classList.remove('batton');
+          battBtn.classList.add('battoff');
+        }
+
       } catch (e) {
         console.error("Error fetching GPIO states:", e);
       }
@@ -82,6 +151,42 @@
         await updateStates();              // then update state display
       } catch (e) {
         console.error("Failed to play/pauze:", e);
+      }
+    }
+
+    async function pvClick(state) {
+      try {
+        await fetch(`/pv/${state}`);   // send command to ESP32
+        await updateStates();              // then update state display
+      } catch (e) {
+        console.error("Failed to change pv state:", e);
+      }
+    }
+
+    async function windClick(state) {
+      try {
+        await fetch(`/wind/${state}`);   // send command to ESP32
+        await updateStates();              // then update state display
+      } catch (e) {
+        console.error("Failed to change wind state:", e);
+      }
+    }
+
+    async function evClick(state) {
+      try {
+        await fetch(`/ev/${state}`);   // send command to ESP32
+        await updateStates();              // then update state display
+      } catch (e) {
+        console.error("Failed to change ev state:", e);
+      }
+    }
+
+    async function battClick(state) {
+      try {
+        await fetch(`/batt/${state}`);   // send command to ESP32
+        await updateStates();              // then update state display
+      } catch (e) {
+        console.error("Failed to change batt state:", e);
       }
     }
 

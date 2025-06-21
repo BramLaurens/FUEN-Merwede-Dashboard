@@ -28,7 +28,88 @@ html {
   margin: 2px;
   cursor: pointer;
 }
+
 #runBtn.running {
+  background-color: red;
+  border: none;
+  color: white;
+  padding: 16px 40px;
+  font-size: 30px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+#pvBtn.pvoff {
+  background-color: #471396;
+  border: none;
+  color: white;
+  padding: 16px 40px;
+  font-size: 20px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+#pvBtn.pvon {
+  background-color: red;
+  border: none;
+  color: white;
+  padding: 16px 40px;
+  font-size: 30px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+#windBtn.windoff {
+  background-color: #471396;
+  border: none;
+  color: white;
+  padding: 16px 40px;
+  font-size: 20px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+#windBtn.pvon {
+  background-color: red;
+  border: none;
+  color: white;
+  padding: 16px 40px;
+  font-size: 30px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+#evBtn.evoff {
+  background-color: #471396;
+  border: none;
+  color: white;
+  padding: 16px 40px;
+  font-size: 20px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+#evBtn.evon {
+  background-color: red;
+  border: none;
+  color: white;
+  padding: 16px 40px;
+  font-size: 30px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+#battBtn.battoff {
+  background-color: #471396;
+  border: none;
+  color: white;
+  padding: 16px 40px;
+  font-size: 20px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+#battBtn.batton {
   background-color: red;
   border: none;
   color: white;
