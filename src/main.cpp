@@ -42,9 +42,11 @@ int simulationState = 0; // 0: Custom, 1: Overload, 2: regular
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, OLED_DC, OLED_RESET, OLED_CS);
 Adafruit_SSD1306 display2(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, OLED_DC, OLED_RESET2, OLED_CS2);
 
+HardwareSerial SerialUART(2); // Use UART2 for communication
+
 void setup() {
   Serial.begin(115200);
-  Serial2.begin(115200, SERIAL_8N1, 26, 27); // Initialize UART2 with RX on GPIO 26 and TX on GPIO 27
+  SerialUART.begin(115200, SERIAL_8N1, 26, 27); // Initialize UART2 with RX on GPIO 26 and TX on GPIO 27
 
   if (!LittleFS.begin()) {
     Serial.println("An error has occurred while mounting LittleFS");
@@ -96,8 +98,8 @@ void setup() {
 }
 
 void loop() {
-  if(Serial2.available()) {
-    String command = Serial2.readStringUntil('\n');
+  if(SerialUART.available()) {
+    String command = SerialUART.readStringUntil('\n');
     Serial.println("Received command: " + command);
 
     if (command == "FILL"){
