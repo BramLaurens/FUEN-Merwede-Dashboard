@@ -87,7 +87,7 @@ const long usage_profile_nohp_base[24]{
     1500000   // 23:00 - Late evening
 };
 
-const long usage_profile_hp_with_PV[24]{
+const long usage_profile_nohp_with_PV[24]{
     // Usage profile for a typical day with PV generation. No HP. With EV.
     1200000,   // 00:00 - night, low usage
     1000000,   // 01:00
@@ -116,4 +116,120 @@ const long usage_profile_hp_with_PV[24]{
     3500000,   // 21:00
     2000000,   // 22:00
     1400000    // 23:00 - night again
+};
+
+const long usage_profile_nohp_noev_base[24]{
+    500000,   // 00:00 - Late night, very low usage
+    450000,   // 01:00
+    400000,   // 02:00
+    400000,   // 03:00
+    450000,   // 04:00 - Slight rise before morning
+    1500000,  // 05:00 - Morning ramp-up
+    2500000,  // 06:00
+    4500000,  // 07:00 - Morning peak
+    4000000,  // 08:00 - Still high
+    2500000,  // 09:00
+    2000000,  // 10:00 - Daytime plateau
+    1800000,  // 11:00
+    1850000,  // 12:00
+    1800000,  // 13:00
+    1900000,  // 14:00
+    2100000,  // 15:00 - Gradual climb
+    2700000,  // 16:00
+    4000000,  // 17:00
+    4900000,  // 18:00 - Evening peak
+    5000000,  // 19:00 - Max usage of the day
+    4000000,  // 20:00 - Declining
+    2700000,  // 21:00
+    1800000,  // 22:00
+    1200000   // 23:00 - Night again
+};
+
+const long usage_profile_nohp_noev_with_PV[24]{
+    1000000,   // 00:00 - night, low usage
+    900000,    // 01:00
+    850000,    // 02:00
+    800000,    // 03:00
+    900000,    // 04:00
+    1800000,   // 05:00 - morning ramp-up
+    3000000,   // 06:00
+    5000000,   // 07:00 - morning peak
+    4200000,   // 08:00
+    2500000,   // 09:00
+    500000,    // 10:00 - solar kicking in
+    -2000000,  // 11:00 - net PV export
+    -4000000,  // 12:00 - PV peak production
+    -3500000,  // 13:00
+    -3000000,  // 14:00
+    -1500000,  // 15:00
+    500000,    // 16:00 - net consumption resumes
+    2800000,   // 17:00 - evening ramp-up
+    4700000,   // 18:00 - evening peak
+    5000000,   // 19:00 - max daily usage
+    4000000,   // 20:00
+    2800000,   // 21:00
+    1800000,   // 22:00
+    1200000    // 23:00
+};
+
+const long usage_profile_base_BATT[24]{
+    800000,   // 00:00 - night
+    700000,   // 01:00
+    650000,   // 02:00
+    650000,   // 03:00
+    750000,   // 04:00
+
+    2500000,  // 05:00 - ramp-up
+    4000000,  // 06:00
+    5000000,  // 07:00 - capped peak
+    4700000,  // 08:00
+    3000000,  // 09:00
+
+    2500000,  // 10:00 - steady daytime
+    2300000,  // 11:00
+    2400000,  // 12:00
+    2300000,  // 13:00
+    2500000,  // 14:00
+
+    3000000,  // 15:00
+    3700000,  // 16:00
+    4700000,  // 17:00
+    5000000,  // 18:00 - evening peak shaved
+    5000000,  // 19:00 - max (capped)
+
+    4000000,  // 20:00
+    2800000,  // 21:00
+    2000000,  // 22:00
+    1500000   // 23:00
+};
+
+const long usage_profile_with_PV_BATT[24]{
+    800000,    // 00:00 - night
+    700000,    // 01:00
+    650000,    // 02:00
+    650000,    // 03:00
+    750000,    // 04:00
+
+    2000000,   // 05:00
+    3000000,   // 06:00
+    4500000,   // 07:00 - morning peak (battery assisted)
+    4200000,   // 08:00
+    2500000,   // 09:00
+
+    1000000,   // 10:00 - PV generation begins
+    -500000,   // 11:00 - excess stored in battery
+    -1500000,  // 12:00 - peak PV generation (shaved from -4M)
+    -1000000,  // 13:00
+    -500000,   // 14:00
+    500000,    // 15:00 - returning to net load
+
+    3000000,   // 16:00
+    4200000,   // 17:00
+    4900000,   // 18:00 - peak
+    5000000,   // 19:00 - capped
+
+    4000000,   // 20:00
+    2700000,   // 21:00
+    2000000,   // 22:00
+    1500000    // 23:00
 };
