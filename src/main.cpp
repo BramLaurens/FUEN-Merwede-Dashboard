@@ -7,6 +7,7 @@
 #include <Adafruit_GFX.h>
 #include <SPI.h>
 #include <HardwareSerial.h>
+#include <usage_profiles.h>
 
 #define houseleds_pin 23
 #define smoke_pin 22
