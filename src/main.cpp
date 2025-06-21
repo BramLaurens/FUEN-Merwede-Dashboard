@@ -119,21 +119,17 @@ void wind_animation();
 void batt_animation();
 
 
-
+HardwareSerial SerialUART(2); // Create a HardwareSerial object for SerialUART
 
 
 void setup() {
   Serial.begin(115200);
-  Serial2.begin(115200, SERIAL_8N1, 26, 27); // Initialize hardware serial on pins 26 (RX) and 27 (TX)
+  SerialUART.begin(115200, SERIAL_8N1, 26, 27); // Initialize hardware serial on pins 26 (RX) and 27 (TX)
   Serial.println("Starting...");
 
   // Initialize the output variables as outputs
-  pinMode(output2, OUTPUT);
-  pinMode(output27, OUTPUT);
   pinMode(houseleds_pin, OUTPUT);
   // Set outputs to LOW
-  digitalWrite(output2, LOW);
-  digitalWrite(output27, LOW);
 
   if (!LittleFS.begin()) {
     Serial.println("An error has occurred while mounting LittleFS");
@@ -179,7 +175,7 @@ void loop() {
     digitalWrite(houseleds_pin, HIGH);  // Turn on the house LEDs
 
     Serial.println("Sending test message to SerialUART...");
-    Serial2.println("FILL");
+    SerialUART.println("FILL");
     delay(100); // Delay to ensure the message is sent
   }
 }
@@ -380,25 +376,21 @@ void HTML_handler() {
   // GPIO control
   server.on("/2/on", HTTP_GET, [](AsyncWebServerRequest *request) {
     output2State = "on";
-    digitalWrite(output2, HIGH);
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/2/off", HTTP_GET, [](AsyncWebServerRequest *request) {
     output2State = "off";
-    digitalWrite(output2, LOW);
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/27/on", HTTP_GET, [](AsyncWebServerRequest *request) {
     output27State = "on";
-    digitalWrite(output27, HIGH);
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/27/off", HTTP_GET, [](AsyncWebServerRequest *request) {
     output27State = "off";
-    digitalWrite(output27, LOW);
     request->send(200, "text/plain", "OK");
   });
 
