@@ -104,6 +104,9 @@ void loop() {
       display.clearDisplay();
       display2.clearDisplay();
       display.fillScreen(SSD1306_WHITE);
+      display2.fillScreen(SSD1306_WHITE);
+      display.display();
+      display2.display();
     }
   }
 }
