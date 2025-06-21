@@ -179,7 +179,7 @@ void loop() {
     digitalWrite(houseleds_pin, HIGH);  // Turn on the house LEDs
 
     Serial.println("Sending test message to SerialUART...");
-    SerialUART.print("FILL");
+    SerialUART.println("FILL");
   }
 }
 
