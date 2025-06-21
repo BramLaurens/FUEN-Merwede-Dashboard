@@ -180,6 +180,7 @@ void loop() {
 
     Serial.println("Sending test message to SerialUART...");
     SerialUART.println("FILL");
+    delay(100); // Delay to ensure the message is sent
   }
 }
 
