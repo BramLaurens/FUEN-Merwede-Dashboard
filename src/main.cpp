@@ -168,8 +168,6 @@ void setup() {
 
 void loop() {
 
-  
-
   if(runState == "Running") {
     HV1_animation();  // Run the animation function
     HV2_animation();  // Run the animation function
