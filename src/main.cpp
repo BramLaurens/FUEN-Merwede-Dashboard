@@ -116,6 +116,14 @@ int chase7Index = 0;
 unsigned long last7Update = 0;
 unsigned long interval7 = 80;
 
+bool HV1_animation_enabled = true;
+bool HV2_animation_enabled = true;
+bool HV3_animation_enabled = true;
+bool lv1_animation_enabled = true;
+bool lv2_animation_enabled = true;
+bool wind_animation_enabled = true;
+bool batt_animation_enabled = true;
+
 // Simulation timing variables
 unsigned long last_hourupdate = 0;
 const unsigned long simInterval = 1000; //Simulation speed in ms per step
@@ -213,6 +221,9 @@ void stripOff() {
   fill_solid(leds2, HV2_NUM_LEDS, CRGB::Black);
   fill_solid(leds3, HV3_NUM_LEDS, CRGB::Black);
   fill_solid(lv_leds1, LV1_NUM_LEDS, CRGB::Black);
+  fill_solid(lv_leds2, LV2_NUM_LEDS, CRGB::Black);
+  fill_solid(wind_leds, WINDLED_NUM_LEDS, CRGB::Black);
+  fill_solid(batt_leds, BATTLED_NUM_LEDS, CRGB::Black);
   FastLED.show();
   digitalWrite(houseleds_pin, LOW);  // Turn off the house LEDs
   digitalWrite(smoke_pin, LOW);  // Turn on the smoke pin
@@ -295,7 +306,16 @@ void lv1_animation() {
     FastLED.show();
 
     // Advance the chase index
-    chase4Index = (chase4Index + 1) % LV1_NUM_LEDS;
+    if(power >= 0) {
+      chase4Index = (chase4Index + 1) % LV1_NUM_LEDS;
+    }
+    else {
+      if(chase4Index == 0) {
+        chase4Index = LV1_NUM_LEDS - 1;
+      } else {
+        chase4Index--;
+      }
+    }
   }
 }
 
@@ -315,7 +335,16 @@ void lv2_animation() {
     FastLED.show();
 
     // Advance the chase index
-    chase5Index = (chase5Index + 1) % LV2_NUM_LEDS;
+    if(power >= 0) {
+      chase5Index = (chase5Index + 1) % LV2_NUM_LEDS;
+    }
+    else {
+      if(chase5Index == 0) {
+        chase5Index = LV2_NUM_LEDS - 1;
+      } else {
+        chase5Index--;
+      }
+    }
   }
 }
 
@@ -359,34 +388,44 @@ void batt_animation() {
     FastLED.show();
 
     // Advance the chase index
-    if(chase7Index == 0) {
-      chase7Index = BATTLED_NUM_LEDS - 1;
-    } else {
-      chase7Index--;
+    if (power >= 0) {
+      if(chase7Index == 0) {
+        chase7Index = BATTLED_NUM_LEDS - 1;
+      } else {
+        chase7Index--;
+      }
+    }
+    else {
+      chase7Index = (chase7Index + 1) % BATTLED_NUM_LEDS;
     }
   }
 }
 
 void animationspeedMap(long power) {
   // Map the power value to a speed for the animations
-  interval1 = map(power, 0, 10000000, 50, 10);
-  interval2 = map(power, 0, 10000000, 80, 10);
-  interval3 = map(power, 0, 10000000, 80, 10);
-  interval4 = map(power, 0, 10000000, 80, 10);
-  interval5 = map(power, 0, 10000000, 80, 10);
-  interval6 = map(power, 0, 10000000, 80, 10);
-  interval7 = map(power, 0, 10000000, 80, 10);
+
+  if(power >= 0){  
+    interval1 = map(power, 0, 10000000, 50, 10);
+    interval2 = map(power, 0, 10000000, 80, 10);
+    interval3 = map(power, 0, 10000000, 80, 10);
+    interval4 = map(power, 0, 10000000, 80, 10);
+    interval5 = map(power, 0, 10000000, 80, 10);
+    interval6 = map(power, 0, 10000000, 80, 10);
+    interval7 = map(power, 0, 10000000, 80, 10);
+  }
+  else{
+    interval1 = map(power, 0, -10000000, 50, 10);
+    interval2 = map(power, 0, -10000000, 80, 10);
+    interval3 = map(power, 0, -10000000, 80, 10);
+    interval4 = map(power, 0, -10000000, 80, 10);
+    interval5 = map(power, 0, -10000000, 80, 10);
+    interval6 = map(power, 0, -10000000, 80, 10);
+    interval7 = map(power, 0, -10000000, 80, 10); 
+  }
+
 }
 
 void simRunning() {
-  
-  HV1_animation();
-  HV2_animation();
-  HV3_animation();
-  lv1_animation();
-  lv2_animation();
-  wind_animation();
-  batt_animation();
   
   // Simulation timing framework
   unsigned long currentTime = millis();
@@ -400,21 +439,106 @@ void simRunning() {
   if(currentHour >= 24) {
     currentHour = 0; // Reset to 0 after 24 hours
   }
+
+  // Animations
+
+  if(HV1_animation_enabled) {
+    HV1_animation();
+  }
+  else{
+    fill_solid(leds, HV1_NUM_LEDS, CRGB::Black);
+    FastLED.show();
+  }
+  if(HV2_animation_enabled) {
+    HV2_animation();
+  }
+  else{
+    fill_solid(leds2, HV2_NUM_LEDS, CRGB::Black);
+    FastLED.show();
+  }
+  if(HV3_animation_enabled) {
+    HV3_animation();
+  }
+  else{
+    fill_solid(leds3, HV3_NUM_LEDS, CRGB::Black);
+    FastLED.show();
+  }
+  if(lv1_animation_enabled) {
+    lv1_animation();
+  }
+  else{
+    fill_solid(lv_leds1, LV1_NUM_LEDS, CRGB::Black);
+    FastLED.show();
+  }
+  if(lv2_animation_enabled) {
+    lv2_animation();
+  }
+  else{
+    fill_solid(lv_leds2, LV2_NUM_LEDS, CRGB::Black);
+    FastLED.show();
+  }
+  if(wind_animation_enabled) {
+    wind_animation();
+  }
+  else {
+    fill_solid(wind_leds, WINDLED_NUM_LEDS, CRGB::Black);
+    FastLED.show();
+  }
+  if(batt_animation_enabled) {
+    batt_animation();
+  }
+  else {
+    fill_solid(batt_leds, BATTLED_NUM_LEDS, CRGB::Black);
+    FastLED.show();
+  }
 }
 
 void simSteps(){
-  // Logic to determine steps based on the current hour and states
+  // Logic that runs every simulation step while simulation is running
 
   // Base scenario
   if(pvState == "off" && windState == "off" && evState == "off" && hpState == "off" && battState == "off") {
 
+    power = usage_profile_base[currentHour]; // Get the power consumption for the current hour
+
+    HV1_animation_enabled = true;
+    HV2_animation_enabled = true;
+    HV3_animation_enabled = true;
+    lv1_animation_enabled = true;
+    lv2_animation_enabled = true;
+    wind_animation_enabled = false;
+    batt_animation_enabled = false;
+
     Serial.print("Current Hour: " + String(currentHour));
     Serial.print("  ");
-    Serial.println("Current load: " + String(usage_profile_base[currentHour]) + "W");
-    displayUART('P', usage_profile_base[currentHour]);
+    Serial.println("Current load: " + String(power) + "W");
+    displayUART('P', power);
     displayUART('H', currentHour);
 
-    animationspeedMap(usage_profile_base[currentHour]);
+    animationspeedMap(power);
+
+  }
+
+  // Usage profile with PV
+  if(pvState == "On" && windState == "off" && evState == "off" && hpState == "off" && battState == "off") {
+
+    power = usage_profile_with_PV[currentHour]; // Get the power consumption for the current hour
+
+    HV1_animation_enabled = true;
+    HV2_animation_enabled = true;
+    HV3_animation_enabled = true;
+    lv1_animation_enabled = true;
+    lv2_animation_enabled = true;
+    wind_animation_enabled = false;
+    batt_animation_enabled = false;
+
+    Serial.print("Current Hour: " + String(currentHour));
+    Serial.print("  ");
+    Serial.println("Current load: " + String(power) + "W");
+    displayUART('P', power);
+    displayUART('H', currentHour);
+
+    animationspeedMap(power);
 
   }
 }
