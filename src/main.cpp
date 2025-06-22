@@ -497,7 +497,7 @@ void simSteps(){
   // Logic that runs every simulation step while simulation is running
 
   // Base scenario
-  if(pvState == "off" && windState == "off" && evState == "off" && hpState == "off" && battState == "off") {
+  if(pvState == "off" && evState == "On" && hpState == "On" && battState == "off") {
 
     power = usage_profile_base[currentHour]; // Get the power consumption for the current hour
 
@@ -520,7 +520,7 @@ void simSteps(){
   }
 
   // Usage profile with PV
-  if(pvState == "On" && windState == "off" && evState == "off" && hpState == "off" && battState == "off") {
+  if(pvState == "On" && evState == "On" && hpState == "On" && battState == "off") {
 
     power = usage_profile_with_PV[currentHour]; // Get the power consumption for the current hour
 
@@ -539,7 +539,132 @@ void simSteps(){
     displayUART('H', currentHour);
 
     animationspeedMap(power);
+  }
 
+  // Usage profile no HP base
+  if(pvState == "off" && evState == "On" && hpState == "off" && battState == "off") {
+
+    power = usage_profile_nohp_base[currentHour]; // Get the power consumption for the current hour
+
+    HV1_animation_enabled = true;
+    HV2_animation_enabled = true;
+    HV3_animation_enabled = true;
+    lv1_animation_enabled = true;
+    lv2_animation_enabled = true;
+    batt_animation_enabled = false;
+
+    Serial.print("Current Hour: " + String(currentHour));
+    Serial.print("  ");
+    Serial.println("Current load: " + String(power) + "W");
+    displayUART('P', power);
+    displayUART('H', currentHour);
+
+    animationspeedMap(power);
+  }
+
+  // Usage profile with PV and no HP
+  if(pvState == "On" && evState == "On" && hpState == "off" && battState == "off") {
+
+    power = usage_profile_nohp_with_PV[currentHour]; // Get the power consumption for the current hour
+
+    HV1_animation_enabled = true;
+    HV2_animation_enabled = true;
+    HV3_animation_enabled = true;
+    lv1_animation_enabled = true;
+    lv2_animation_enabled = true;
+    batt_animation_enabled = false;
+
+    Serial.print("Current Hour: " + String(currentHour));
+    Serial.print("  ");
+    Serial.println("Current load: " + String(power) + "W");
+    displayUART('P', power);
+    displayUART('H', currentHour);
+
+    animationspeedMap(power);
+  }
+
+  // Usage profile no HP no EV base
+  if(pvState == "off" && evState == "off" && hpState == "off" && battState == "off") {
+
+    power = usage_profile_nohp_noev_base[currentHour]; // Get the power consumption for the current hour
+
+    HV1_animation_enabled = true;
+    HV2_animation_enabled = true;
+    HV3_animation_enabled = true;
+    lv1_animation_enabled = true;
+    lv2_animation_enabled = true;
+    batt_animation_enabled = false;
+
+    Serial.print("Current Hour: " + String(currentHour));
+    Serial.print("  ");
+    Serial.println("Current load: " + String(power) + "W");
+    displayUART('P', power);
+    displayUART('H', currentHour);
+
+    animationspeedMap(power);
+  }
+
+  // Usage profile with PV and no HP and no EV
+  if(pvState == "On" && evState == "off" && hpState == "off" && battState == "off") {
+
+    power = usage_profile_nohp_noev_with_PV[currentHour]; // Get the power consumption for the current hour
+
+    HV1_animation_enabled = true;
+    HV2_animation_enabled = true;
+    HV3_animation_enabled = true;
+    lv1_animation_enabled = true;
+    lv2_animation_enabled = true;
+    batt_animation_enabled = false;
+
+    Serial.print("Current Hour: " + String(currentHour));
+    Serial.print("  ");
+    Serial.println("Current load: " + String(power) + "W");
+    displayUART('P', power);
+    displayUART('H', currentHour);
+
+    animationspeedMap(power);
+  }
+
+  // Usage profile with EV, HP, Battery and no PV
+  if(pvState == "off" && evState == "On" && hpState == "On" && battState == "On") {
+
+    power = usage_profile_base_BATT[currentHour]; // Get the power consumption for the current hour
+
+    HV1_animation_enabled = true;
+    HV2_animation_enabled = true;
+    HV3_animation_enabled = true;
+    lv1_animation_enabled = true;
+    lv2_animation_enabled = true;
+    batt_animation_enabled = true;
+
+    Serial.print("Current Hour: " + String(currentHour));
+    Serial.print("  ");
+    Serial.println("Current load: " + String(power) + "W");
+    displayUART('P', power);
+    displayUART('H', currentHour);
+
+    animationspeedMap(power);
+  }
+
+  // Usage profile with EV, HP, Battery and PV
+  if(pvState == "On" && evState == "On" && hpState == "On" && battState == "On") {
+
+    power = usage_profile_with_PV_BATT[currentHour]; // Get the power consumption for the current hour
+
+    HV1_animation_enabled = true;
+    HV2_animation_enabled = true;
+    HV3_animation_enabled = true;
+    lv1_animation_enabled = true;
+    lv2_animation_enabled = true;
+    batt_animation_enabled = true;
+
+    Serial.print("Current Hour: " + String(currentHour));
+    Serial.print("  ");
+    Serial.println("Current load: " + String(power) + "W");
+    displayUART('P', power);
+    displayUART('H', currentHour);
+
+    animationspeedMap(power);
   }
 }
 
@@ -610,6 +735,7 @@ void HTML_handler() {
 
   server.on("/ev/off", HTTP_GET, [](AsyncWebServerRequest *request) {
     evState = "off";
+    battState = "off";
     Serial.println("EV state set to off");
     request->send(200, "text/plain", "OK");
   });
@@ -622,6 +748,7 @@ void HTML_handler() {
 
   server.on("/hp/off", HTTP_GET, [](AsyncWebServerRequest *request) {
     hpState = "off";
+    battState = "off";
     Serial.println("HP state set to off");
     request->send(200, "text/plain", "OK");
   });
@@ -639,8 +766,10 @@ void HTML_handler() {
   });
 
   server.on("/batt/on", HTTP_GET, [](AsyncWebServerRequest *request) {
-    battState = "On";
-    Serial.println("Battery state set to on");
+    if(hpState == "On" && evState == "On") {
+      battState = "On";
+      Serial.println("Battery state set to on");
+    }
     request->send(200, "text/plain", "OK");
   });
 
