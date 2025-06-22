@@ -123,18 +123,31 @@ void serialRead() {
       Serial.println(value);
 
       powerValueMW = (value.toDouble()/2000); // Convert the string to an integer in KW and divide by two for each substation
-    }    
+    }
+    if(identifier == 'H'){
+      Serial.println("Received Time value:");
+      Serial.println(value);
+
+      currentTime = value.toInt(); // Convert the string to an integer
+    }
     displayMW(powerValueMW, currentTime);
   }
 }
 
 void displayMW(long powerMW, int time) {
+  char timeStr[6];  // Buffer to hold the formatted time string "hh:00"
+  sprintf(timeStr, "%02d:00", time);  // Format time as two-digit hour followed by ":00"
+
   display.clearDisplay();
   display.setCursor(0, 0);
   display.setTextSize(2);
   display.setTextColor(SSD1306_WHITE);
   display.print(powerMW);
   display.print(" kW");
+  display.setCursor(0, 32);
+  display.setTextSize(2);
+  display.setTextColor(SSD1306_WHITE);
+  display.print(timeStr);
   display.display();
 
   display2.clearDisplay();
@@ -143,5 +156,9 @@ void displayMW(long powerMW, int time) {
   display2.setTextColor(SSD1306_WHITE);
   display2.print(powerMW);
   display2.print(" kW");
+  display2.setCursor(0, 32);
+  display2.setTextSize(2);
+  display2.setTextColor(SSD1306_WHITE);
+  display2.print(timeStr);
   display2.display();
 }
