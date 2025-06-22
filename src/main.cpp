@@ -44,6 +44,9 @@ Adafruit_SSD1306 display2(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, OLED_DC, OLED_RESET
 
 HardwareSerial SerialUART(2); // Use UART2 for communication
 
+// Prototypes
+void serialRead();
+
 void setup() {
   Serial.begin(115200);
   SerialUART.begin(115200, SERIAL_8N1, 26, 27); // Initialize UART2 with RX on GPIO 26 and TX on GPIO 27
@@ -98,19 +101,21 @@ void setup() {
 }
 
 void loop() {
+  serialRead();
+}
 
+void serialRead() {
   if(SerialUART.available()) {
     String command = SerialUART.readStringUntil('\n');
     command.trim(); // Remove any trailing newline or spaces
     Serial.println("Received command: " + command);
 
-    if (command == "FILL"){
-      display.clearDisplay();
-      display2.clearDisplay();
-      display.fillScreen(SSD1306_WHITE);
-      display2.fillScreen(SSD1306_WHITE);
-      display.display();
-      display2.display();
-    }
+    char identifier = command.charAt(0);
+    String value = command.substring(1);
+
+    if(identifier == 'P'){
+      Serial.println("Received Power value:");
+      Serial.println(value);
+    }    
   }
 }
