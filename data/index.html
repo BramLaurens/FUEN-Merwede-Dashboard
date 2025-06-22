@@ -87,10 +87,9 @@
         const res = await fetch('/gpio');
         const data = await res.json();
         const currentHour = document.getElementById('currentHour');
+        currentHour.textContent = String(data["currentHour"]).padStart(2, '0') + ":00";
 
         document.getElementById('run_state').textContent = data["runState"];
-
-        currentHour.textContent = data["currentHour"];
 
         if (data["runState"] == "Running") {
           runBtn.textContent = 'Stop';

@@ -380,7 +380,7 @@ void simRunning() {
 }
 
 void simSteps(){
-  // Steps to be executed every hour
+  // Logic to determine steps based on the current hour and states
 
   // Base scenario
   if(pvState == "off" && windState == "off" && evState == "off" && hpState == "off" && battState == "off") {
