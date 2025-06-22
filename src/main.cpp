@@ -370,7 +370,7 @@ void simRunning() {
 
   if(currentTime - last_hourupdate > simInterval){
      currentHour++;
-     Serial.println("Current Hour: " + String(currentHour));
+     simSteps();
      last_hourupdate = currentTime;
   }
 
@@ -381,6 +381,14 @@ void simRunning() {
 
 void simSteps(){
   // Steps to be executed every hour
+
+  // Base scenario
+  if(pvState == "off" && windState == "off" && evState == "off" && hpState == "off" && battState == "off") {
+    Serial.print("Current Hour: " + String(currentHour));
+    Serial.print("");
+    Serial.println("Current load: " + String(usage_profile_base[currentHour]) + "W");
+
+  }
 }
 
 void HTML_handler() {
