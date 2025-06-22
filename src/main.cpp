@@ -182,6 +182,10 @@ void loop() {
     // Run simulation if Running state is set
     simRunning();
   }
+  else if(runState == "Stopped") {
+    // Stop all animations and turn off LEDs
+    stripOff();
+  }
 
 }
 void displayUART(char code, long value) {
@@ -352,6 +356,15 @@ void batt_animation() {
 }
 
 void simRunning() {
+  
+  HV1_animation();
+  HV2_animation();
+  HV3_animation();
+  lv1_animation();
+  lv2_animation();
+  wind_animation();
+  batt_animation();
+  
   // Simulation timing framework
   unsigned long currentTime = millis();
 
