@@ -126,7 +126,7 @@ bool batt_animation_enabled = true;
 
 // Simulation timing variables
 unsigned long last_hourupdate = 0;
-const unsigned long simInterval = 1000; //Simulation speed in ms per step
+unsigned long simInterval = 1000; //Simulation speed in ms per step
 int currentHour = 0;
 
 // Prototypes
@@ -240,7 +240,7 @@ void HV1_animation() {
     fadeToBlackBy(leds, HV1_NUM_LEDS, 40);
 
     // Set the chase pixel
-    leds[chase1Index] = CRGB::Blue;
+    leds[chase1Index] = CRGB::White;
 
     // Show the new frame
     FastLED.show();
@@ -260,7 +260,7 @@ void HV2_animation() {
     fadeToBlackBy(leds2, HV2_NUM_LEDS, 100);
 
     // Set the chase pixel
-    leds2[chase2Index] = CRGB::Green;
+    leds2[chase2Index] = CRGB::Blue;
 
     // Show the new frame
     FastLED.show();
@@ -280,7 +280,7 @@ void HV3_animation() {
     fadeToBlackBy(leds3, HV3_NUM_LEDS, 100);
 
     // Set the chase pixel
-    leds3[chase3Index] = CRGB::Green;
+    leds3[chase3Index] = CRGB::Blue;
 
     // Show the new frame
     FastLED.show();
@@ -293,6 +293,7 @@ void HV3_animation() {
 void lv1_animation() {
   unsigned long currentMillis = millis();
 
+  digitalWrite(houseleds_pin, HIGH);  // Turn on the house LEDs
   if (currentMillis - last4Update >= interval4) {
     last4Update = currentMillis;
 
@@ -321,6 +322,8 @@ void lv1_animation() {
 
 void lv2_animation() {
   unsigned long currentMillis = millis();
+
+  digitalWrite(houseleds_pin, HIGH);  // Turn on the house LEDs
 
   if (currentMillis - last5Update >= interval5) {
     last5Update = currentMillis;
@@ -382,7 +385,7 @@ void batt_animation() {
     fadeToBlackBy(batt_leds, BATTLED_NUM_LEDS, 100);
 
     // Set the chase pixel
-    batt_leds[chase7Index] = CRGB::Red;
+    
 
     // Show the new frame
     FastLED.show();
@@ -390,6 +393,7 @@ void batt_animation() {
     // Advance the chase index
     if (currentHour >= 5 && currentHour <= 9 || currentHour >= 17 && currentHour <= 20) {
       // If time is between 5 and 9 OR 17 and 20 show discharge animation
+      batt_leds[chase7Index] = CRGB::White;
       if(chase7Index == 0) {
         chase7Index = BATTLED_NUM_LEDS - 1;
       } else {
@@ -397,6 +401,7 @@ void batt_animation() {
       }
     }
     else {
+      batt_leds[chase7Index] = CRGB::Red;
       chase7Index = (chase7Index + 1) % BATTLED_NUM_LEDS;
     }
   }
@@ -406,22 +411,22 @@ void animationspeedMap(long power) {
   // Map the power value to a speed for the animations
 
   if(power >= 0){  
-    interval1 = map(power, 0, 10000000, 50, 10);
-    interval2 = map(power, 0, 10000000, 80, 10);
-    interval3 = map(power, 0, 10000000, 80, 10);
-    interval4 = map(power, 0, 10000000, 80, 10);
-    interval5 = map(power, 0, 10000000, 80, 10);
-    interval6 = map(power, 0, 10000000, 80, 10);
-    interval7 = map(power, 0, 10000000, 80, 10);
+    interval1 = map(power, 0, 9000000, 50, 1);
+    interval2 = map(power, 0, 8000000, 80, 1);
+    interval3 = map(power, 0, 8000000, 80, 1);
+    interval4 = map(power, 0, 9000000, 80, 8);
+    interval5 = map(power, 0, 9000000, 80, 8);
+    interval6 = map(power, 0, 9000000, 80, 8);
+    interval7 = map(power, 0, 9000000, 80, 8);
   }
   else{
-    interval1 = map(power, 0, -10000000, 50, 10);
-    interval2 = map(power, 0, -10000000, 80, 10);
-    interval3 = map(power, 0, -10000000, 80, 10);
-    interval4 = map(power, 0, -10000000, 80, 10);
-    interval5 = map(power, 0, -10000000, 80, 10);
-    interval6 = map(power, 0, -10000000, 80, 10);
-    interval7 = map(power, 0, -10000000, 80, 10); 
+    interval1 = map(power, 0, -10000000, 50, 1);
+    interval2 = map(power, 0, -10000000, 80, 1);
+    interval3 = map(power, 0, -10000000, 80, 1);
+    interval4 = map(power, 0, -10000000, 80, 8);
+    interval5 = map(power, 0, -10000000, 80, 8);
+    interval6 = map(power, 0, -10000000, 80, 8);
+    interval7 = map(power, 0, -10000000, 80, 8); 
   }
 
 }
@@ -430,6 +435,8 @@ void simRunning() {
   
   // Simulation timing framework
   unsigned long currentTime = millis();
+
+  simInterval = map(sliderValue, 255, 0, 500, 2000); // Map slider value to simulation speed
 
   if(currentTime - last_hourupdate > simInterval){
      currentHour++;
@@ -450,32 +457,34 @@ void simRunning() {
     fill_solid(leds, HV1_NUM_LEDS, CRGB::Black);
     FastLED.show();
   }
-  if(HV2_animation_enabled) {
+  if(HV2_animation_enabled && power < 8500000) {
     HV2_animation();
   }
   else{
     fill_solid(leds2, HV2_NUM_LEDS, CRGB::Black);
     FastLED.show();
   }
-  if(HV3_animation_enabled) {
+  if(HV3_animation_enabled && power < 8500000) {
     HV3_animation();
   }
   else{
     fill_solid(leds3, HV3_NUM_LEDS, CRGB::Black);
     FastLED.show();
   }
-  if(lv1_animation_enabled) {
+  if(lv1_animation_enabled && power < 8500000) {
     lv1_animation();
   }
   else{
     fill_solid(lv_leds1, LV1_NUM_LEDS, CRGB::Black);
+    digitalWrite(houseleds_pin, LOW);  // Turn on the house LEDs
     FastLED.show();
   }
-  if(lv2_animation_enabled) {
+  if(lv2_animation_enabled && power < 8500000) {
     lv2_animation();
   }
   else{
     fill_solid(lv_leds2, LV2_NUM_LEDS, CRGB::Black);
+    digitalWrite(houseleds_pin, LOW);  // Turn on the house LEDs
     FastLED.show();
   }
   if(wind_animation_enabled) {
