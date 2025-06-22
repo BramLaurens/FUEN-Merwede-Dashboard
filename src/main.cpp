@@ -245,7 +245,7 @@ void HV2_animation() {
     fadeToBlackBy(leds2, HV2_NUM_LEDS, 100);
 
     // Set the chase pixel
-    leds2[chase2Index] = CRGB::Blue;
+    leds2[chase2Index] = CRGB::Green;
 
     // Show the new frame
     FastLED.show();
@@ -265,7 +265,7 @@ void HV3_animation() {
     fadeToBlackBy(leds3, HV3_NUM_LEDS, 100);
 
     // Set the chase pixel
-    leds3[chase3Index] = CRGB::Blue;
+    leds3[chase3Index] = CRGB::Green;
 
     // Show the new frame
     FastLED.show();
@@ -285,7 +285,7 @@ void lv1_animation() {
     fadeToBlackBy(lv_leds1, LV1_NUM_LEDS, 100);
 
     // Set the chase pixel
-    lv_leds1[chase4Index] = CRGB::Blue;
+    lv_leds1[chase4Index] = CRGB::Red;
 
     // Show the new frame
     FastLED.show();
@@ -305,7 +305,7 @@ void lv2_animation() {
     fadeToBlackBy(lv_leds2, LV2_NUM_LEDS, 100);
 
     // Set the chase pixel
-    lv_leds2[chase5Index] = CRGB::Blue;
+    lv_leds2[chase5Index] = CRGB::Red;
 
     // Show the new frame
     FastLED.show();
@@ -331,7 +331,11 @@ void wind_animation() {
     FastLED.show();
 
     // Advance the chase index
-    chase6Index = (chase6Index + 1) % WINDLED_NUM_LEDS;
+    if (chase6Index == 0) {
+      chase6Index = WINDLED_NUM_LEDS - 1;
+    } else {
+      chase6Index--;
+    }
   }
 }
 
@@ -345,13 +349,17 @@ void batt_animation() {
     fadeToBlackBy(batt_leds, BATTLED_NUM_LEDS, 100);
 
     // Set the chase pixel
-    batt_leds[chase7Index] = CRGB::Blue;
+    batt_leds[chase7Index] = CRGB::Red;
 
     // Show the new frame
     FastLED.show();
 
     // Advance the chase index
-    chase7Index = (chase7Index + 1) % BATTLED_NUM_LEDS;
+    if(chase7Index == 0) {
+      chase7Index = BATTLED_NUM_LEDS - 1;
+    } else {
+      chase7Index--;
+    }
   }
 }
 
