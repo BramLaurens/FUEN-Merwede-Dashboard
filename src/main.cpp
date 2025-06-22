@@ -388,7 +388,8 @@ void batt_animation() {
     FastLED.show();
 
     // Advance the chase index
-    if (power >= 0) {
+    if (currentHour >= 5 && currentHour <= 9 || currentHour >= 17 && currentHour <= 20) {
+      // If time is between 5 and 9 OR 17 and 20 show discharge animation
       if(chase7Index == 0) {
         chase7Index = BATTLED_NUM_LEDS - 1;
       } else {
