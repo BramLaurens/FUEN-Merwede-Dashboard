@@ -370,6 +370,8 @@ void simRunning() {
 
   if(currentTime - last_hourupdate > simInterval){
      currentHour++;
+     Serial.println("Current Hour: " + String(currentHour));
+     last_hourupdate = currentTime;
   }
 
   if(currentHour >= 24) {
