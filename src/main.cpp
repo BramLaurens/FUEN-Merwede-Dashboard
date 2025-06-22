@@ -17,6 +17,10 @@ String output27State = "off";
 String runState = "Stopped";
 int sliderValue = 0;
 
+// Display values
+long powerValueMW = 0; // Power value in MW
+int currentTime = 0; // Current time in seconds
+
 // Simulation states
 bool PV_ON = false;
 bool wind_ON = false;
@@ -46,6 +50,7 @@ HardwareSerial SerialUART(2); // Use UART2 for communication
 
 // Prototypes
 void serialRead();
+void displayMW(long powerMW, int time);
 
 void setup() {
   Serial.begin(115200);
@@ -116,6 +121,27 @@ void serialRead() {
     if(identifier == 'P'){
       Serial.println("Received Power value:");
       Serial.println(value);
+
+      powerValueMW = (value.toDouble()/2000); // Convert the string to an integer in KW and divide by two for each substation
     }    
+    displayMW(powerValueMW, currentTime);
   }
+}
+
+void displayMW(long powerMW, int time) {
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.setTextSize(2);
+  display.setTextColor(SSD1306_WHITE);
+  display.print(powerMW);
+  display.print(" kW");
+  display.display();
+
+  display2.clearDisplay();
+  display2.setCursor(0, 0);
+  display2.setTextSize(2);
+  display2.setTextColor(SSD1306_WHITE);
+  display2.print(powerMW);
+  display2.print(" kW");
+  display2.display();
 }
