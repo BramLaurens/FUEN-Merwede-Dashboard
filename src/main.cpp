@@ -448,8 +448,15 @@ void simRunning() {
     currentHour = 0; // Reset to 0 after 24 hours
   }
 
-  // Animations
+  // Turn on windmill
+  if(windState == "On") {
+    wind_animation_enabled = true; // Enable wind animation if windState is On
+  }
+  else {
+    wind_animation_enabled = false; // Disable wind animation if windState is Off
+  }
 
+  // Animations
   if(HV1_animation_enabled) {
     HV1_animation();
   }
