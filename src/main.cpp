@@ -69,13 +69,16 @@ String output2State = "off";
 String output27State = "off";
 int sliderValue = 0;
 
-// Simulation states
+// Simulation state variables
 String runState = "Stopped";
 String pvState = "off"; // PV state
 String windState = "off"; // Wind state
 String evState = "off"; // EV state
 String hpState = "off"; // hp state
 String battState = "off"; // batt state
+
+// global variables for simulation
+long power = 0; // Power consumption in W
 
 int weatherState = 0; // 0: Sunny, 1: Cloudy+wind, 2: Rainy
 int simulationState = 0; // 0: Custom, 1: Overload, 2: regular
@@ -87,31 +90,31 @@ const int output27 = 27;
 // Animation variables
 int chase1Index = 0;
 unsigned long last1Update = 0;
-const unsigned long interval1 = 10;
+unsigned long interval1 = 80;
 
 int chase2Index = 0;
 unsigned long last2Update = 0;
-const unsigned long interval2 = 80;
+unsigned long interval2 = 80;
 
 int chase3Index = 0;
 unsigned long last3Update = 0;
-const unsigned long interval3 = 80;
+unsigned long interval3 = 80;
 
 int chase4Index = 0;
 unsigned long last4Update = 0;
-const unsigned long interval4 = 80;
+unsigned long interval4 = 80;
 
 int chase5Index = 0;
 unsigned long last5Update = 0;
-const unsigned long interval5 = 80;
+unsigned long interval5 = 80;
 
 int chase6Index = 0;
 unsigned long last6Update = 0;
-const unsigned long interval6 = 80;
+unsigned long interval6 = 80;
 
 int chase7Index = 0;
 unsigned long last7Update = 0;
-const unsigned long interval7 = 80;
+unsigned long interval7 = 80;
 
 // Simulation timing variables
 unsigned long last_hourupdate = 0;
@@ -132,6 +135,7 @@ void batt_animation();
 void simRunning();
 void simSteps();
 void displayUART(char code, long value);
+void animationspeedMap(long power);
 
 HardwareSerial SerialUART(2); // Create a HardwareSerial object for SerialUART
 
@@ -363,6 +367,17 @@ void batt_animation() {
   }
 }
 
+void animationspeedMap(long power) {
+  // Map the power value to a speed for the animations
+  interval1 = map(power, 0, 10000000, 50, 10);
+  interval2 = map(power, 0, 10000000, 80, 10);
+  interval3 = map(power, 0, 10000000, 80, 10);
+  interval4 = map(power, 0, 10000000, 80, 10);
+  interval5 = map(power, 0, 10000000, 80, 10);
+  interval6 = map(power, 0, 10000000, 80, 10);
+  interval7 = map(power, 0, 10000000, 80, 10);
+}
+
 void simRunning() {
   
   HV1_animation();
@@ -392,11 +407,14 @@ void simSteps(){
 
   // Base scenario
   if(pvState == "off" && windState == "off" && evState == "off" && hpState == "off" && battState == "off") {
+
     Serial.print("Current Hour: " + String(currentHour));
-    Serial.print("");
+    Serial.print("  ");
     Serial.println("Current load: " + String(usage_profile_base[currentHour]) + "W");
     displayUART('P', usage_profile_base[currentHour]);
     displayUART('H', currentHour);
+
+    animationspeedMap(usage_profile_base[currentHour]);
 
   }
 }
