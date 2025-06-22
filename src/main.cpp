@@ -388,6 +388,7 @@ void simSteps(){
     Serial.print("");
     Serial.println("Current load: " + String(usage_profile_base[currentHour]) + "W");
     displayUART('P', usage_profile_base[currentHour]);
+    displayUART('H', currentHour);
 
   }
 }
