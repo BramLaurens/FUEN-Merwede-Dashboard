@@ -395,16 +395,16 @@ void HTML_handler() {
   // JSON endpoint for states
   server.on("/gpio", HTTP_GET, [](AsyncWebServerRequest *request) {
     String json = "{";
-    json += "\"runState\":\"" + runState + "\",";
-    json += "\"2\":\"" + output2State + "\",";
-    json += "\"27\":\"" + output27State + "\"";
-    json += "\"pvState\":\"" + pvState + "\"";
-    json += "\"windState\":\"" + windState + "\"";
-    json += "\"evState\":\"" + evState + "\"";
-    json += "\"hpState\":\"" + hpState + "\"";
-    json += "\"battState\":\"" + battState + "\"";
-    json += ",\"hourValue\":" + currentHour;
-    json += "}";
+      json += "\"runState\":\"" + runState + "\",";
+      json += "\"2\":\"" + output2State + "\",";
+      json += "\"27\":\"" + output27State + "\",";
+      json += "\"pvState\":\"" + pvState + "\",";
+      json += "\"windState\":\"" + windState + "\",";
+      json += "\"evState\":\"" + evState + "\",";
+      json += "\"hpState\":\"" + hpState + "\",";
+      json += "\"battState\":\"" + battState + "\",";
+      json += "\"hourValue\":" + String(currentHour);
+      json += "}";
     request->send(200, "application/json", json);
     Serial.println("GPIO JSON sent: " + json);
   });
