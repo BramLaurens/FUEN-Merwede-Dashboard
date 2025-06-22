@@ -61,8 +61,8 @@
       await evClick(desiredState); // This also calls updateStates()
     });
 
-    evBtn.addEventListener('click', async function () {
-      const desiredState = evBtn.classList.contains('hpon') ? 'off' : 'on';
+    hpBtn.addEventListener('click', async function () {
+      const desiredState = hpBtn.classList.contains('hpon') ? 'off' : 'on';
       await hpClick(desiredState); // This also calls updateStates()
     });
 
@@ -133,13 +133,13 @@
         }
 
         if (data["hpState"] == "On") {
-          evBtn.textContent = 'Heat Pump Off';
-          evBtn.classList.remove('hpoff');
-          evBtn.classList.add('hpon');
+          hpBtn.textContent = 'Heat Pump Off';
+          hpBtn.classList.remove('hpoff');
+          hpBtn.classList.add('hpon');
         } else {
-          evBtn.textContent = 'Heat Pump On';
-          evBtn.classList.remove('hpon');
-          evBtn.classList.add('hpoff');
+          hpBtn.textContent = 'Heat Pump On';
+          hpBtn.classList.remove('hpon');
+          hpBtn.classList.add('hpoff');
         }
 
         if (data["battState"] == "On") {

@@ -424,41 +424,61 @@ void HTML_handler() {
   // Handle load control HTTPS requests
   server.on("/pv/off", HTTP_GET, [](AsyncWebServerRequest *request) {
     pvState = "off";
+    Serial.println("PV state set to off");
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/pv/on", HTTP_GET, [](AsyncWebServerRequest *request) {
     pvState = "On";
+    Serial.println("PV state set to On");
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/wind/off", HTTP_GET, [](AsyncWebServerRequest *request) {
     windState = "off";
+    Serial.println("Wind state set to off");
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/wind/on", HTTP_GET, [](AsyncWebServerRequest *request) {
     windState = "On";
+    Serial.println("Wind state set to On");
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/ev/off", HTTP_GET, [](AsyncWebServerRequest *request) {
     evState = "off";
+    Serial.println("EV state set to off");
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/ev/on", HTTP_GET, [](AsyncWebServerRequest *request) {
     evState = "On";
+    Serial.println("EV state set to On");
+    request->send(200, "text/plain", "OK");
+  });
+
+  server.on("/hp/off", HTTP_GET, [](AsyncWebServerRequest *request) {
+    hpState = "off";
+    Serial.println("HP state set to off");
+    request->send(200, "text/plain", "OK");
+  });
+
+  server.on("/hp/on", HTTP_GET, [](AsyncWebServerRequest *request) {
+    hpState = "On";
+    Serial.println("HP state set to On");
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/batt/off", HTTP_GET, [](AsyncWebServerRequest *request) {
     battState = "off";
+    Serial.println("Battery state set to off");
     request->send(200, "text/plain", "OK");
   });
 
   server.on("/batt/on", HTTP_GET, [](AsyncWebServerRequest *request) {
-    battState = "on";
+    battState = "On";
+    Serial.println("Battery state set to on");
     request->send(200, "text/plain", "OK");
   });
 
