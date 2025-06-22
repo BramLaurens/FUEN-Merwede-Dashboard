@@ -666,6 +666,48 @@ void simSteps(){
 
     animationspeedMap(power);
   }
+
+  // Usage profile with HP, no EV, no PV
+  if(pvState == "off" && evState == "off" && hpState == "On" && battState == "Off") {
+
+    power = usage_profile_noev_base[currentHour]; // Get the power consumption for the current hour
+
+    HV1_animation_enabled = true;
+    HV2_animation_enabled = true;
+    HV3_animation_enabled = true;
+    lv1_animation_enabled = true;
+    lv2_animation_enabled = true;
+    batt_animation_enabled = false;
+
+    Serial.print("Current Hour: " + String(currentHour));
+    Serial.print("  ");
+    Serial.println("Current load: " + String(power) + "W");
+    displayUART('P', power);
+    displayUART('H', currentHour);
+
+    animationspeedMap(power);
+  }
+
+  //  Usage profile with HP, no EV, with PV
+  if(pvState == "On" && evState == "off" && hpState == "On" && battState == "Off") {
+
+    power = usage_profile_noev_with_PV[currentHour]; // Get the power consumption for the current hour
+
+    HV1_animation_enabled = true;
+    HV2_animation_enabled = true;
+    HV3_animation_enabled = true;
+    lv1_animation_enabled = true;
+    lv2_animation_enabled = true;
+    batt_animation_enabled = false;
+
+    Serial.print("Current Hour: " + String(currentHour));
+    Serial.print("  ");
+    Serial.println("Current load: " + String(power) + "W");
+    displayUART('P', power);
+    displayUART('H', currentHour);
+
+    animationspeedMap(power);
+  }
 }
 
 void HTML_handler() {
